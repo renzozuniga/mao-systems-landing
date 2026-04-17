@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 158" width="520" height="158">
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#16A34A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#14532D;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Icon: rounded square (110×110, y=24) — centered vertically with the 3-line text block -->
+  <!-- Text block: MAO(y=78) + SYSTEMS(y=101) + divider(y=114) + slogan(y=135) = ~111px tall -->
+  <!-- Icon center y = 24 + 55 = 79 — aligns with center of MAO+SYSTEMS block -->
+  <rect x="0" y="24" width="110" height="110" rx="20" ry="20" fill="url(#bg-gradient)" />
+
+  <!-- MS monogram inside icon — identical to standalone icon -->
+  <text
+    x="55"
+    y="91"
+    font-family="'Trebuchet MS', 'Century Gothic', 'Gill Sans MT', Arial, sans-serif"
+    font-size="44"
+    font-weight="700"
+    text-anchor="middle"
+    letter-spacing="3"
+    fill="white"
+    opacity="0.96"
+  >MS</text>
+
+  <!-- "MAO" wordmark -->
+  <text
+    x="128"
+    y="92"
+    font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+    font-size="50"
+    font-weight="800"
+    letter-spacing="-1"
+    fill="#14532D"
+  >MAO</text>
+
+  <!-- "SYSTEMS" subtitle -->
+  <text
+    x="128"
+    y="115"
+    font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+    font-size="17"
+    font-weight="600"
+    letter-spacing="5.5"
+    fill="#15803D"
+  >SYSTEMS</text>
+
+  <!-- Divider line — starts at x=128, same as text -->
+  <line x1="128" y1="128" x2="498" y2="128" stroke="#A7F3D0" stroke-width="1" />
+
+  <!-- Slogan — same x=128, consistent left edge -->
+  <text
+    x="128"
+    y="148"
+    font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+    font-size="13.5"
+    font-weight="400"
+    letter-spacing="2.2"
+    fill="#6B7280"
+  >Engineering Digital Solutions</text>
+</svg>

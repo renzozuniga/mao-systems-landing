@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#16A34A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#14532D;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect width="512" height="512" rx="96" ry="96" fill="url(#bg-gradient)" />
+
+  <!-- MS monogram — tech font, lighter weight, spaced out -->
+  <text
+    x="256"
+    y="308"
+    font-family="'Trebuchet MS', 'Century Gothic', 'Gill Sans MT', Arial, sans-serif"
+    font-size="192"
+    font-weight="700"
+    text-anchor="middle"
+    letter-spacing="10"
+    fill="white"
+    opacity="0.96"
+  >MS</text>
+</svg>

@@ -1,0 +1,85 @@
+.services {
+  background: var(--bg-white);
+}
+
+/*
+  Grid de 6 columnas virtuales.
+  Cada card ocupa 2 columnas → 3 cards por fila (6 / 2 = 3).
+  Las últimas 2 cards se reposicionan para quedar centradas:
+    card 4 → cols 2–4  (deja 1 vacía a la izq y 1 a la der)
+    card 5 → cols 4–6
+*/
+.services__grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--space-6);
+}
+
+.service-card {
+  grid-column: span 2;
+  background: var(--bg-white);
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  transition: transform var(--transition-base),
+              box-shadow var(--transition-base),
+              border-color var(--transition-base);
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-xl);
+  border-color: rgba(22, 163, 74, 0.2);
+}
+
+/* Center row 2: card 4 ocupa cols 2-4, card 5 ocupa cols 4-6 */
+.service-card:nth-child(4) { grid-column: 2 / 4; }
+.service-card:nth-child(5) { grid-column: 4 / 6; }
+
+/* Icon */
+.service-card__icon {
+  width: 48px; height: 48px;
+  background: var(--color-primary-lighter);
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.service-card__icon svg {
+  width: 22px; height: 22px;
+}
+
+.service-card__title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.service-card__desc {
+  font-size: var(--font-size-base);
+  color: var(--text-secondary);
+  line-height: 1.75;
+  flex: 1;
+}
+
+/* --- Responsive --- */
+@media (max-width: 1024px) {
+  /* 2 columnas: cada card ocupa 1, sin override para las últimas */
+  .services__grid { grid-template-columns: repeat(2, 1fr); }
+
+  .service-card              { grid-column: span 1; }
+  .service-card:nth-child(4) { grid-column: span 1; }
+  .service-card:nth-child(5) { grid-column: span 1; }
+}
+
+@media (max-width: 640px) {
+  .services__grid { grid-template-columns: 1fr; }
+}
