@@ -2,6 +2,7 @@
   "name": "mao-systems-api",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js"
