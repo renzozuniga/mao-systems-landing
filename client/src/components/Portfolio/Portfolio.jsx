@@ -8,6 +8,7 @@ const PROJECTS = [
     description:
       'Sistema de gestión de tareas estilo Kanban con drag & drop, asignación de responsables y seguimiento en tiempo real.',
     status: 'En vivo',
+    url: 'https://taskboard-client.vercel.app/',
   },
   {
     gradient: 'linear-gradient(135deg, #0891B2 0%, #0E7490 100%)',
@@ -16,6 +17,7 @@ const PROJECTS = [
     description:
       'Panel de métricas empresariales con gráficas interactivas, filtros dinámicos y exportación a Excel para equipos de operaciones.',
     status: 'En vivo',
+    url: 'https://mao-analytics.vercel.app',
   },
   {
     gradient: 'linear-gradient(135deg, #16A34A 0%, #15803D 100%)',
@@ -61,14 +63,23 @@ export default function Portfolio() {
         </header>
 
         <div className="portfolio__grid">
-          {PROJECTS.map(({ gradient, tags, title, description, status }, i) => (
+          {PROJECTS.map(({ gradient, tags, title, description, status, url }, i) => (
             <article
               key={title}
-              className={`project-card animate-on-scroll delay-${i + 1}`}
+              className={`project-card animate-on-scroll delay-${i + 1}${url ? ' project-card--linked' : ''}`}
             >
               {/* Color header */}
               <div className="project-card__header" style={{ background: gradient }}>
                 <span className="project-card__status">{status}</span>
+                {url && (
+                  <span className="project-card__header-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                      <polyline points="15 3 21 3 21 9"/>
+                      <line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                  </span>
+                )}
               </div>
 
               {/* Content */}
@@ -80,6 +91,20 @@ export default function Portfolio() {
                 </div>
                 <h3 className="project-card__title">{title}</h3>
                 <p className="project-card__desc">{description}</p>
+                {url && (
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="project-card__link"
+                  >
+                    Ver proyecto
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12"/>
+                      <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                  </a>
+                )}
               </div>
             </article>
           ))}
