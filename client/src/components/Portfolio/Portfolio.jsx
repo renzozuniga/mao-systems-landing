@@ -26,6 +26,7 @@ const PROJECTS = [
     description:
       'API REST con autenticación JWT, roles de usuario, documentación automática con Swagger y cobertura de pruebas al 90%.',
     status: 'En vivo',
+    url: 'https://mao-rest-api.onrender.com/docs',
   },
   {
     gradient: 'linear-gradient(135deg, #EA580C 0%, #DC2626 100%)',
