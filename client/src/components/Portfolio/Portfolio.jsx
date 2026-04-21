@@ -38,11 +38,12 @@ const PROJECTS = [
   },
   {
     gradient: 'linear-gradient(135deg, #9333EA 0%, #DB2777 100%)',
-    tags: ['Angular', '.NET', 'SQL Server'],
+    tags: ['Angular', 'Node.js', 'PostgreSQL'],
     title: 'Mini CRM',
     description:
       'Gestión de clientes y pipeline de ventas para PYMEs: contactos, seguimiento de oportunidades y reportes de cierre.',
-    status: 'En desarrollo',
+    status: 'En vivo',
+    url: 'https://mao-mini-crm.vercel.app',
   },
 ]
 
