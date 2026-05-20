@@ -1,46 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 130" width="520" height="130">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 144" width="600" height="144" role="img" aria-label="MAO Systems">
   <defs>
-    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#16A34A;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#14532D;stop-opacity:1" />
+    <linearGradient id="mao-h-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F3D2E"></stop>
+      <stop offset="100%" stop-color="#082A20"></stop>
+    </linearGradient>
+    <linearGradient id="mao-h-flow" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F4F1EA" stop-opacity="0.20"></stop>
+      <stop offset="50%" stop-color="#F4F1EA" stop-opacity="0.60"></stop>
+      <stop offset="100%" stop-color="#7BB89E" stop-opacity="0.90"></stop>
     </linearGradient>
   </defs>
 
-  <!-- Icon: rounded square (110×110, y=10) — identical to standalone icon -->
-  <rect x="0" y="10" width="110" height="110" rx="20" ry="20" fill="url(#bg-gradient)" />
+  <rect x="8" y="14" width="116" height="116" rx="26" ry="26" fill="url(#mao-h-bg)"></rect>
+  <g transform="translate(8, 14) scale(0.2265)">
+    <path d="M 22 458 C 170 478, 110 210, 256 256 C 402 302, 342 34, 490 54" fill="none" stroke="url(#mao-h-flow)" stroke-width="40" stroke-linecap="round"></path>
+    <circle cx="22" cy="458" r="6" fill="#F4F1EA" opacity="0.28"></circle>
+    <circle cx="490" cy="54" r="6" fill="#7BB89E" opacity="0.85"></circle>
 
-  <!-- MS monogram inside icon — tech font, vertically centered -->
-  <text
-    x="55"
-    y="77"
-    font-family="'Trebuchet MS', 'Century Gothic', 'Gill Sans MT', Arial, sans-serif"
-    font-size="44"
-    font-weight="700"
-    text-anchor="middle"
-    letter-spacing="3"
-    fill="white"
-    opacity="0.96"
-  >MS</text>
+    <circle cx="96" cy="382" r="60" fill="#F4F1EA"></circle>
+    <text x="96" y="406" font-family="'Geist', 'Inter', sans-serif" font-size="64" font-weight="800" text-anchor="middle" fill="#0F3D2E" letter-spacing="-3">M</text>
 
-  <!-- "MAO" wordmark — baseline y=78, vertically centered to icon (center y=65) -->
-  <text
-    x="128"
-    y="78"
-    font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
-    font-size="50"
-    font-weight="800"
-    letter-spacing="-1"
-    fill="#14532D"
-  >MAO</text>
+    <circle cx="256" cy="256" r="60" fill="#F4F1EA"></circle>
+    <text x="256" y="280" font-family="'Geist', 'Inter', sans-serif" font-size="64" font-weight="800" text-anchor="middle" fill="#0F3D2E" letter-spacing="-3">A</text>
 
-  <!-- "SYSTEMS" subtitle — aligned to same x as MAO -->
-  <text
-    x="128"
-    y="101"
-    font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
-    font-size="17"
-    font-weight="600"
-    letter-spacing="5.5"
-    fill="#15803D"
-  >SYSTEMS</text>
+    <circle cx="414" cy="128" r="60" fill="#7BB89E"></circle>
+    <text x="414" y="152" font-family="'Geist', 'Inter', sans-serif" font-size="64" font-weight="800" text-anchor="middle" fill="#0F3D2E" letter-spacing="-3">O</text>
+  </g>
+
+  <text x="156" y="88" font-family="'Geist', 'Inter', -apple-system, 'Segoe UI', Arial, sans-serif" font-size="58" font-weight="700" letter-spacing="-2.2" fill="#0F3D2E">MAO</text>
+
+  <text x="158" y="118" font-family="'Geist Mono', 'JetBrains Mono', ui-monospace, monospace" font-size="14" font-weight="500" letter-spacing="6" fill="#467764">SYSTEMS</text>
 </svg>

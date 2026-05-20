@@ -128,8 +128,8 @@
 }
 
 @keyframes avail-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(22,163,74,0.5); }
-  50%       { box-shadow: 0 0 0 5px rgba(22,163,74,0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(15, 61, 46, 0.5); }
+  50%       { box-shadow: 0 0 0 5px rgba(15, 61, 46, 0); }
 }
 
 /* Bottom bar */

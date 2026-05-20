@@ -21,7 +21,7 @@
 
 .hero__blob--1 {
   width: 600px; height: 600px;
-  background: radial-gradient(circle, #D1FAE5 0%, rgba(209,250,229,0) 70%);
+  background: radial-gradient(circle, var(--mao-forest-100) 0%, rgba(210, 226, 217, 0) 70%);
   top: -160px; right: -160px;
   opacity: 0.7;
   animation: blob-float 9s ease-in-out infinite;
@@ -29,7 +29,7 @@
 
 .hero__blob--2 {
   width: 340px; height: 340px;
-  background: radial-gradient(circle, #A7F3D0 0%, rgba(167,243,208,0) 70%);
+  background: radial-gradient(circle, var(--mao-forest-200) 0%, rgba(168, 199, 183, 0) 70%);
   bottom: 60px; left: -100px;
   opacity: 0.5;
   animation: blob-float 12s ease-in-out infinite reverse;
@@ -37,7 +37,7 @@
 
 .hero__blob--3 {
   width: 200px; height: 200px;
-  background: radial-gradient(circle, #6EE7B7 0%, rgba(110,231,183,0) 70%);
+  background: radial-gradient(circle, var(--mao-forest-300) 0%, rgba(123, 184, 158, 0) 70%);
   top: 40%; left: 40%;
   opacity: 0.25;
   animation: blob-float 7s ease-in-out infinite 2s;
@@ -129,8 +129,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(22,163,74,0.4); }
-  50%       { box-shadow: 0 0 0 6px rgba(22,163,74,0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(15, 61, 46, 0.4); }
+  50%       { box-shadow: 0 0 0 6px rgba(15, 61, 46, 0); }
 }
 
 /* --- Visual block --- */
@@ -150,7 +150,7 @@
 
 .hero__icon-wrap {
   animation: icon-float 6s ease-in-out infinite;
-  filter: drop-shadow(0 24px 48px rgba(22,163,74,0.22));
+  filter: drop-shadow(0 24px 48px rgba(15, 61, 46, 0.22));
 }
 
 .hero__icon {
@@ -167,7 +167,7 @@
 .hero__ring {
   position: absolute;
   width: 260px; height: 260px;
-  border: 1.5px solid rgba(22,163,74,0.18);
+  border: 1.5px solid rgba(15, 61, 46, 0.18);
   border-radius: 50%;
   animation: ring-spin 18s linear infinite;
 }

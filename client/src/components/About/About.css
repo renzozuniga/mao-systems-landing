@@ -24,7 +24,7 @@
   gap: var(--space-10);
   margin-top: var(--space-10);
   padding-top: var(--space-8);
-  border-top: 1px solid rgba(22, 163, 74, 0.2);
+  border-top: 1px solid rgba(15, 61, 46, 0.2);
 }
 
 .about__stat {
@@ -107,8 +107,8 @@
 }
 
 @keyframes about-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(110,231,183,0.5); }
-  50%       { box-shadow: 0 0 0 6px rgba(110,231,183,0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(123, 184, 158, 0.5); }
+  50%       { box-shadow: 0 0 0 6px rgba(123, 184, 158, 0); }
 }
 
 /* Floating chip card */

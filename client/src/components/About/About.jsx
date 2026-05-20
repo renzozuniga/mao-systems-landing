@@ -46,7 +46,7 @@ export default function About() {
         {/* Right: brand card */}
         <div className="about__visual animate-on-scroll delay-2">
           <div className="about__card">
-            <img src="/assets/mao-icon.svg" alt="MAO Systems" className="about__card-icon" />
+            <img src="/assets/mao-icon-light.svg" alt="MAO Systems" className="about__card-icon" />
             <div className="about__card-text">
               <p className="about__card-name">MAO Systems</p>
               <p className="about__card-tagline">Engineering Digital Solutions</p>

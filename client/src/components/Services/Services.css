@@ -30,9 +30,9 @@
 }
 
 .service-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-xl);
-  border-color: rgba(22, 163, 74, 0.2);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(15, 61, 46, 0.2);
 }
 
 /* Center row 2: card 4 ocupa cols 2-4, card 5 ocupa cols 4-6 */

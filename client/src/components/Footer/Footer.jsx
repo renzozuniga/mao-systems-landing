@@ -21,7 +21,7 @@ export default function Footer() {
         {/* Brand column */}
         <div className="footer__brand">
           <a href="#home" className="footer__logo" aria-label="MAO Systems — inicio">
-            <img src="/assets/mao-icon.svg" alt="" className="footer__logo-icon" />
+            <img src="/assets/mao-icon-light.svg" alt="" className="footer__logo-icon" />
             <div className="footer__logo-text">
               <span className="footer__logo-name">MAO Systems</span>
               <span className="footer__logo-tagline">Engineering Digital Solutions</span>
