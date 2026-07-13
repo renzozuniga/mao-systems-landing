@@ -85,17 +85,9 @@ NODE_ENV=development
 CLIENT_ORIGIN=http://localhost:3000
 CONTACT_TO_EMAIL=correo-destino@ejemplo.com
 
-# SMTP (opción A — Gmail App Password)
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=tu-correo@gmail.com
-SMTP_PASS=xxxx xxxx xxxx xxxx
-
-# SMTP (opción B — Resend)
-# SMTP_HOST=smtp.resend.com
-# SMTP_PORT=465
-# SMTP_USER=resend
-# SMTP_PASS=re_xxxxxxxxxxxxxxxxxxxx
+# Resend — API HTTPS (SDK oficial)
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxx
+RESEND_FROM_EMAIL=onboarding@resend.dev
 ```
 
 > **Nunca subas archivos `.env` con datos reales al repositorio.** Usa siempre las variables de entorno del dashboard de Vercel / Render en producción.
@@ -147,10 +139,8 @@ Consulta `LANDING_GUIDE.md` para el paso a paso completo de despliegue, configur
 | `NODE_ENV`           | `production`                   |
 | `CLIENT_ORIGIN`      | `https://maosystems.io`        |
 | `CONTACT_TO_EMAIL`   | — por completar —              |
-| `SMTP_HOST`          | — por completar —              |
-| `SMTP_PORT`          | — por completar —              |
-| `SMTP_USER`          | — por completar —              |
-| `SMTP_PASS`          | — por completar —              |
+| `RESEND_API_KEY`     | — por completar —              |
+| `RESEND_FROM_EMAIL`  | — por completar —              |
 
 ---
 

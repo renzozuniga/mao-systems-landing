@@ -1,21 +1,10 @@
 import express              from 'express'
-import nodemailer            from 'nodemailer'
+import { Resend }            from 'resend'
 import { body, validationResult } from 'express-validator'
 
 const router = express.Router()
 
-// ── Nodemailer transporter ────────────────────────────────────────────────────
-/** Creates a reusable SMTP transporter from environment variables. */
-const createTransporter = () =>
-  nodemailer.createTransport({
-    host:   process.env.SMTP_HOST || 'smtp.gmail.com',
-    port:   Number(process.env.SMTP_PORT) || 587,
-    secure: Number(process.env.SMTP_PORT) === 465,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  })
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 // ── Validation rules ──────────────────────────────────────────────────────────
 const contactValidation = [
@@ -49,7 +38,7 @@ const contactValidation = [
  * @param {object} req.body - { name, email, company?, message }
  * @returns {200} { message: 'Mensaje enviado correctamente.' }
  * @returns {422} { message, errors[] } on validation failure
- * @returns {500} { message } on SMTP error
+ * @returns {500} { message } on send error
  */
 router.post('/', contactValidation, async (req, res) => {
   // Validate input
@@ -101,22 +90,27 @@ router.post('/', contactValidation, async (req, res) => {
     </div>
   `
 
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
+
   try {
-    const transporter = createTransporter()
-    const fromEmail = process.env.SMTP_FROM_EMAIL || 'onboarding@resend.dev'
-    await transporter.sendMail({
-      from:    `"MAO Systems Web" <${fromEmail}>`,
-      to:      toEmail,
+    const { error } = await resend.emails.send({
+      from:    `MAO Systems Web <${fromEmail}>`,
+      to:      [toEmail],
       replyTo: email,
       subject: `[maosystems.io] Nuevo contacto de ${name}`,
       html,
       text: `Nombre: ${name}\nEmail: ${email}\n${company ? `Empresa: ${company}\n` : ''}Mensaje:\n${message}`,
     })
 
+    if (error) {
+      console.error('[CONTACT] Resend error:', error)
+      return res.status(500).json({ message: 'Error al enviar el mensaje. Inténtalo nuevamente.' })
+    }
+
     console.log(`[CONTACT] Message from ${email} sent to ${toEmail}`)
     return res.status(200).json({ message: 'Mensaje enviado correctamente.' })
   } catch (err) {
-    console.error('[CONTACT] SMTP error:', err.message)
+    console.error('[CONTACT] Resend error:', err.message)
     return res.status(500).json({ message: 'Error al enviar el mensaje. Inténtalo nuevamente.' })
   }
 })
