@@ -103,8 +103,9 @@ router.post('/', contactValidation, async (req, res) => {
 
   try {
     const transporter = createTransporter()
+    const fromEmail = process.env.SMTP_FROM_EMAIL || 'onboarding@resend.dev'
     await transporter.sendMail({
-      from:    `"MAO Systems Web" <${process.env.SMTP_USER}>`,
+      from:    `"MAO Systems Web" <${fromEmail}>`,
       to:      toEmail,
       replyTo: email,
       subject: `[maosystems.io] Nuevo contacto de ${name}`,
