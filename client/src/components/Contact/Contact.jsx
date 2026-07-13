@@ -56,7 +56,7 @@ export default function Contact() {
 
           <div className="contact__items">
             {/* Email */}
-            <a href="mailto:rzuniga@maosystems.io" className="contact__item">
+            <a href="mailto:maosystems.dev@gmail.com" className="contact__item">
               <span className="contact__item-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <rect x="2" y="4" width="20" height="16" rx="2"/>
@@ -65,7 +65,7 @@ export default function Contact() {
               </span>
               <div>
                 <span className="contact__item-label">Email</span>
-                <span className="contact__item-value">rzuniga@maosystems.io</span>
+                <span className="contact__item-value">maosystems.dev@gmail.com</span>
               </div>
             </a>
 

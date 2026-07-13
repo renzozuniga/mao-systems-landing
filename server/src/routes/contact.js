@@ -62,7 +62,7 @@ router.post('/', contactValidation, async (req, res) => {
   }
 
   const { name, email, company, message } = req.body
-  const toEmail = process.env.CONTACT_TO_EMAIL || 'rzuniga@maosystems.io'
+  const toEmail = process.env.CONTACT_TO_EMAIL || 'maosystems.dev@gmail.com'
 
   // Build email content
   const html = `

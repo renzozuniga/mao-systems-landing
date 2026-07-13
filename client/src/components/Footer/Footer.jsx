@@ -95,8 +95,8 @@ export default function Footer() {
           <h4 className="footer__col-title">Contacto</h4>
           <ul className="footer__links">
             <li>
-              <a href="mailto:rzuniga@maosystems.io" className="footer__link">
-                rzuniga@maosystems.io
+              <a href="mailto:maosystems.dev@gmail.com" className="footer__link">
+                maosystems.dev@gmail.com
               </a>
             </li>
             <li>
