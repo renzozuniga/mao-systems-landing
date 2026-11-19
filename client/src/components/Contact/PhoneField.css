@@ -1,0 +1,196 @@
+.phone {
+  position: relative;
+}
+
+.phone__field {
+  display: flex;
+  align-items: stretch;
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--mao-paper);
+  transition: border-color var(--dur-base), box-shadow var(--dur-base);
+}
+
+.phone__field:focus-within,
+.phone.is-open .phone__field {
+  border-color: var(--brand);
+  box-shadow: var(--ring-brand);
+}
+
+.phone.has-error .phone__field {
+  border-color: var(--mao-danger);
+  box-shadow: var(--ring-danger);
+}
+
+/* Country trigger */
+.phone__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-3) 0 var(--sp-4);
+  border: 0;
+  border-right: 1px solid var(--color-border);
+  border-radius: calc(var(--radius-md) - 1.5px) 0 0 calc(var(--radius-md) - 1.5px);
+  background: var(--color-surface-alt);
+  color: var(--fg-1);
+  cursor: pointer;
+  transition: background var(--dur-base) var(--ease-soft);
+}
+
+.phone__trigger:hover { background: var(--mao-bone); }
+.phone__trigger:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; }
+
+.phone__flag {
+  width: 22px;
+  height: 15px;
+  flex-shrink: 0;
+  border-radius: 3px;
+  /* Hairline so white-edged flags (JP, PE) don't melt into the background. */
+  box-shadow: 0 0 0 1px rgba(20, 18, 14, 0.12);
+  overflow: hidden;
+}
+
+.phone__flag--blank { display: inline-block; background: var(--mao-bone); }
+
+.phone__dial {
+  font-family: var(--font-mono);
+  font-size: var(--fs-16);
+  color: var(--fg-2);
+}
+
+.phone__chevron {
+  width: 16px; height: 16px;
+  color: var(--fg-3);
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.phone.is-open .phone__chevron { transform: rotate(180deg); }
+
+.phone__field input {
+  flex: 1;
+  min-width: 0;
+  height: 60px;
+  padding: 0 var(--sp-4);
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: var(--fs-20);
+  letter-spacing: 0.02em;
+  color: var(--fg-1);
+}
+
+.phone__field input::placeholder { color: var(--fg-4); }
+
+/* Dropdown */
+.phone__menu {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + var(--sp-2));
+  left: 0; right: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--mao-paper);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+  transform-origin: top center;
+  animation: phone-menu-in var(--dur-base) var(--ease-out);
+}
+
+@keyframes phone-menu-in {
+  from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+}
+
+.phone__search {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-4);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--fg-3);
+}
+
+.phone__search svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+.phone__search input {
+  flex: 1;
+  min-width: 0;
+  height: 48px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-size: var(--fs-15);
+  color: var(--fg-1);
+}
+
+.phone__search input::placeholder { color: var(--fg-4); }
+
+.phone__list {
+  list-style: none;
+  margin: 0;
+  padding: var(--sp-2);
+  max-height: 264px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.phone__group {
+  padding: var(--sp-3) var(--sp-3) var(--sp-1);
+  font-family: var(--font-mono);
+  font-size: var(--fs-12);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+.phone__option {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-height: 44px;
+  padding: 0 var(--sp-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-15);
+  color: var(--fg-1);
+  cursor: pointer;
+}
+
+.phone__option[data-active="true"] { background: var(--brand-soft); }
+.phone__option[aria-selected="true"] { font-weight: 600; }
+
+.phone__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.phone__code {
+  font-family: var(--font-mono);
+  font-size: var(--fs-13);
+  color: var(--fg-3);
+}
+
+.phone__check { width: 16px; height: 16px; color: var(--brand); flex-shrink: 0; }
+
+.phone__empty {
+  padding: var(--sp-6) var(--sp-3);
+  text-align: center;
+  font-size: var(--fs-14);
+  color: var(--fg-3);
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .phone__menu { animation: none; }
+  .phone__chevron { transition: none; }
+}
+
+@media (max-width: 480px) {
+  .phone__trigger { padding: 0 var(--sp-2) 0 var(--sp-3); gap: 6px; }
+  .phone__field input { font-size: var(--fs-18); padding: 0 var(--sp-3); }
+  .phone__list { max-height: 232px; }
+}
