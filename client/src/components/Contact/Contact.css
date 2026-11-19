@@ -282,6 +282,10 @@
   opacity: 0;
 }
 
+.stepper__captcha:not(:empty) {
+  margin-top: var(--sp-3);
+}
+
 .stepper__error {
   min-height: 1.4em;
   margin: var(--sp-2) 0 var(--sp-3);
