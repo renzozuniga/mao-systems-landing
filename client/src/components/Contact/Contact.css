@@ -81,7 +81,10 @@
   min-height: 440px;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  /* clip (not hidden) on x only: steps slide sideways without overflowing,
+     while the country dropdown can still extend below the card. */
+  overflow-x: clip;
+  overflow-y: visible;
 }
 
 .stepper__meta {
@@ -228,52 +231,18 @@
 }
 
 /* Phone step */
-.stepper__phone {
-  display: flex;
-  align-items: stretch;
+/* Lazy-load placeholder, same footprint as the real field. */
+.phone__skeleton {
+  height: 63px;
   border: 1.5px solid var(--color-border-strong);
   border-radius: var(--radius-md);
-  background: var(--mao-paper);
-  overflow: hidden;
-  transition: border-color var(--dur-base), box-shadow var(--dur-base);
+  background: linear-gradient(90deg, var(--color-surface-alt) 0 96px, var(--mao-paper) 96px);
 }
 
-.stepper__phone:focus-within {
-  border-color: var(--brand);
-  box-shadow: var(--ring-brand);
-}
 
-.stepper__phone.has-error {
-  border-color: var(--mao-danger);
-  box-shadow: var(--ring-danger);
-}
 
-.stepper__prefix {
-  display: flex;
-  align-items: center;
-  padding: 0 var(--sp-4);
-  font-family: var(--font-mono);
-  font-size: var(--fs-18);
-  color: var(--fg-2);
-  background: var(--color-surface-alt);
-  border-right: 1px solid var(--color-border);
-}
 
-.stepper__phone input {
-  flex: 1;
-  min-width: 0;
-  height: 60px;
-  padding: 0 var(--sp-4);
-  border: 0;
-  outline: none;
-  background: transparent;
-  font-family: var(--font-mono);
-  font-size: var(--fs-20);
-  letter-spacing: 0.04em;
-  color: var(--fg-1);
-}
 
-.stepper__phone input::placeholder { color: var(--fg-4); }
 
 .stepper__hp {
   position: absolute;
@@ -403,7 +372,7 @@
 /* --- Responsive --- */
 @media (max-width: 960px) {
   .contact__container {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-12);
   }
 }

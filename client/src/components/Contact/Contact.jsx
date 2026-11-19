@@ -1,6 +1,29 @@
-import { useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import useTurnstile from './useTurnstile'
 import './Contact.css'
+
+// Phone metadata + flags are heavy; load them only when the phone step shows.
+const loadPhoneField = () => import('./PhoneField')
+const PhoneField = lazy(loadPhoneField)
+
+/**
+ * Starting country from the visitor's time zone, which says where they are
+ * (browser language doesn't: many people in Peru browse in en-US). Covers the
+ * frequent markets; everyone else starts on Peru and can change it.
+ */
+const TZ_COUNTRY = {
+  'America/Lima': 'PE', 'America/Mexico_City': 'MX', 'America/Monterrey': 'MX',
+  'America/Bogota': 'CO', 'America/Santiago': 'CL', 'America/Guayaquil': 'EC',
+  'America/La_Paz': 'BO', 'Europe/Madrid': 'ES',
+}
+const initialCountry = () => {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''
+    if (TZ_COUNTRY[tz]) return TZ_COUNTRY[tz]
+    if (tz.startsWith('America/Argentina/') || tz === 'America/Buenos_Aires') return 'AR'
+  } catch { /* very old browsers: fall through */ }
+  return 'PE'
+}
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 
@@ -28,9 +51,6 @@ const TOTAL_STEPS = QUESTIONS.length + 1   // questions + phone
 const PICK_MS     = 240                    // let the selected fill register before leaving
 const LEAVE_MS    = 260                    // matches .stepper__step--leaving transition
 
-/** "987654321" → "987 654 321" */
-const formatPhone = (digits) => digits.replace(/(\d{3})(?=\d)/g, '$1 ').trim()
-
 /**
  * Contact section: info column + a step-by-step "carousel" that asks three
  * one-tap questions and then only a phone number.
@@ -41,7 +61,7 @@ export default function Contact() {
   const [selected, setSelected] = useState(null)
   const [leaving,  setLeaving]  = useState(false)
   const [dir,      setDir]      = useState('fwd')
-  const [phone,    setPhone]    = useState('')
+  const [phone,    setPhone]    = useState(() => ({ country: initialCountry(), national: '' }))
   const [website,  setWebsite]  = useState('')       // honeypot — humans never see it
   const [error,    setError]    = useState('')
   const [status,   setStatus]   = useState('idle')   // 'idle' | 'sending'
@@ -55,6 +75,12 @@ export default function Contact() {
   const turnstile = useTurnstile(captchaRef, step === QUESTIONS.length)
 
   useEffect(() => () => timers.current.forEach(clearTimeout), [])
+
+  // Fetch the phone chunk while the visitor answers the last question, so the
+  // picker is ready (no skeleton flash) when the phone step slides in.
+  useEffect(() => {
+    if (step >= QUESTIONS.length - 1) loadPhoneField().catch(() => {})
+  }, [step])
 
   // Move focus to each new question for keyboard and screen-reader users, but
   // never on first render, which would yank the page down to this section.
@@ -98,15 +124,21 @@ export default function Contact() {
     if (i !== -1) pick(i)
   }
 
-  const onPhoneChange = (e) => {
-    setPhone(e.target.value.replace(/\D/g, '').slice(0, 9))
+  const onPhoneChange = (next) => {
+    setPhone(next)
     if (error) setError('')
   }
 
   const submit = async (e) => {
     e.preventDefault()
-    if (!/^9\d{8}$/.test(phone)) {
-      setError('Ingresa un celular de 9 dígitos que empiece con 9.')
+    if (!phone.national) {
+      setError('Ingresa tu número de celular.')
+      return
+    }
+    const { describePhone } = await loadPhoneField()
+    const info = describePhone(phone.country, phone.national)
+    if (!info.valid) {
+      setError(`Revisa tu número: no parece un celular válido de ${info.countryName}.`)
       return
     }
     setStatus('sending')
@@ -121,7 +153,7 @@ export default function Contact() {
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({
           answers: QUESTIONS.map((q, i) => ({ question: q.question, answer: answers[i] })),
-          phone,
+          phone: info.e164,
           website,
           // Omit rather than send null while Turnstile has no site key.
           ...(turnstileToken && { turnstileToken }),
@@ -140,7 +172,7 @@ export default function Contact() {
 
   const restart = () => {
     setAnswers([])
-    setPhone('')
+    setPhone((p) => ({ ...p, national: '' }))
     setError('')
     goTo(0, 'back')
   }
@@ -280,20 +312,16 @@ export default function Contact() {
                   Listo. ¿A qué número te escribimos?
                 </h3>
                 <label htmlFor="contact-phone" className="visually-hidden">Número de celular</label>
-                <div className={`stepper__phone${error ? ' has-error' : ''}`}>
-                  <span className="stepper__prefix">+51</span>
-                  <input
-                    id="contact-phone"
-                    type="tel"
-                    inputMode="numeric"
-                    autoComplete="tel-national"
-                    placeholder="987 654 321"
-                    value={formatPhone(phone)}
+                <Suspense fallback={<div className="phone__skeleton" aria-hidden="true" />}>
+                  <PhoneField
+                    inputId="contact-phone"
+                    country={phone.country}
+                    national={phone.national}
                     onChange={onPhoneChange}
-                    aria-invalid={Boolean(error)}
-                    aria-describedby="contact-phone-help"
+                    invalid={Boolean(error)}
+                    describedBy="contact-phone-help"
                   />
-                </div>
+                </Suspense>
                 {/* Honeypot: off-screen field bots tend to fill in. */}
                 <input
                   type="text"
