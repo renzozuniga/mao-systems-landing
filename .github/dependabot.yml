@@ -1,5 +1,8 @@
 # Security fixes arrive as soon as an advisory is published (repo setting);
 # these monthly grouped PRs keep routine version drift small.
+# Major versions are ignored on purpose: they can break things and pairs like
+# react/react-dom or vite/@vitejs/plugin-react must move together, so those
+# upgrades are done deliberately, one at a time, and tested.
 version: 2
 updates:
   - package-ecosystem: npm
@@ -7,6 +10,9 @@ updates:
     target-branch: develop
     schedule:
       interval: monthly
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
       client-deps:
         patterns: ["*"]
@@ -17,6 +23,9 @@ updates:
     target-branch: develop
     schedule:
       interval: monthly
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
       server-deps:
         patterns: ["*"]
