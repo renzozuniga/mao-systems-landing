@@ -219,7 +219,6 @@ export default function Contact() {
             <>
               <div className="stepper__meta">
                 <span>Paso {String(progress).padStart(2, '0')} / {String(TOTAL_STEPS).padStart(2, '0')}</span>
-                <span>Menos de 30 s</span>
               </div>
               <div
                 className="stepper__bar"
@@ -330,10 +329,8 @@ export default function Contact() {
                 </svg>
                 Volver
               </button>
-              {isQuestion && <span className="stepper__hint">Teclas A · B · C</span>}
             </div>
           )}
-          {step === 0 && <div className="stepper__footer"><span /><span className="stepper__hint">Teclas A · B · C</span></div>}
         </div>
 
       </div>
