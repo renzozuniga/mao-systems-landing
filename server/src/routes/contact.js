@@ -1,7 +1,26 @@
 import express              from 'express'
 import { Resend }            from 'resend'
 import { body, validationResult } from 'express-validator'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { verifyTurnstile }   from '../lib/turnstile.js'
+
+const regionName = new Intl.DisplayNames(['es'], { type: 'region' })
+
+/**
+ * Accepts an international number in E.164 ("+5215512345678") or, for web
+ * clients deployed before the country picker, a bare Peruvian mobile
+ * ("987654321"). Returns the parsed number only when it's valid for its country.
+ */
+const parsePhone = (value) => {
+  const raw = String(value ?? '').trim()
+  if (raw.length > 32) return null
+  const digits = raw.replace(/\D/g, '')
+  const candidate = raw.startsWith('+') ? `+${digits}`
+    : /^9\d{8}$/.test(digits) ? `+51${digits}`
+    : null
+  const parsed = candidate && parsePhoneNumberFromString(candidate)
+  return parsed?.isValid() ? parsed : null
+}
 
 const router = express.Router()
 
@@ -28,9 +47,12 @@ const contactValidation = [
     .isString().trim()
     .notEmpty().isLength({ max: 160 }).withMessage('Respuesta inválida.'),
 
-  body('phone')
-    .customSanitizer((v) => String(v ?? '').replace(/\D/g, ''))
-    .matches(/^9\d{8}$/).withMessage('Ingresa un celular de 9 dígitos que empiece con 9.'),
+  body('phone').custom((value, { req }) => {
+    const parsed = parsePhone(value)
+    if (!parsed) throw new Error('Revisa tu número: no parece un celular válido para el país elegido.')
+    req.parsedPhone = parsed
+    return true
+  }),
 
   body('website').optional(),
 
@@ -41,10 +63,10 @@ const contactValidation = [
 
 // ── POST / ────────────────────────────────────────────────────────────────────
 /**
- * Receives the contact stepper's answers plus a Peruvian mobile number and
- * emails them to CONTACT_TO_EMAIL via Resend.
+ * Receives the contact stepper's answers plus a phone number from any country
+ * and emails them to CONTACT_TO_EMAIL via Resend.
  *
- * @param {object} req.body - { answers: [{ question, answer }], phone, website?, turnstileToken? }
+ * @param {object} req.body - { answers: [{ question, answer }], phone (E.164), website?, turnstileToken? }
  * @returns {200} { message }
  * @returns {403} { message } when Turnstile verification fails
  * @returns {422} { message, errors[] } on validation failure
@@ -61,7 +83,8 @@ router.post('/', contactValidation, async (req, res) => {
     })
   }
 
-  const { answers, phone, website, turnstileToken } = req.body
+  const { answers, website, turnstileToken } = req.body
+  const phone = req.parsedPhone
 
   // Honeypot filled → almost certainly a bot. Answer 200 so it doesn't retry.
   if (website) {
@@ -77,8 +100,9 @@ router.post('/', contactValidation, async (req, res) => {
     })
   }
 
-  const prettyPhone = `+51 ${phone.replace(/(\d{3})(?=\d)/g, '$1 ')}`
-  const waLink      = `https://wa.me/51${phone}`
+  const prettyPhone = phone.formatInternational()
+  const country     = phone.country ? regionName.of(phone.country) : ''
+  const waLink      = `https://wa.me/${phone.number.slice(1)}`
   const toEmail     = process.env.CONTACT_TO_EMAIL || 'maosystems.dev@gmail.com'
   const sentAt      = new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' })
 
@@ -99,6 +123,7 @@ router.post('/', contactValidation, async (req, res) => {
       <div style="background: #0F3D2E; padding: 24px 32px; border-radius: 14px 14px 0 0;">
         <p style="margin: 0 0 6px; color: #7BB89E; font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;">maosystems.io · nuevo contacto</p>
         <h1 style="color: #F7F5EF; margin: 0; font-size: 22px; font-weight: 700;">${prettyPhone}</h1>
+        ${country ? `<p style="margin: 6px 0 0; color: #A8C7B7; font-size: 14px;">${esc(country)}</p>` : ''}
       </div>
       <div style="background: #FFFFFF; padding: 28px 32px; border: 1px solid #E2DED3; border-top: none; border-radius: 0 0 14px 14px;">
         <a href="${waLink}" style="display: inline-block; background: #0F3D2E; color: #F7F5EF; text-decoration: none; font-weight: 600; font-size: 14px; padding: 12px 20px; border-radius: 10px;">Escribir por WhatsApp</a>
@@ -110,7 +135,7 @@ router.post('/', contactValidation, async (req, res) => {
   `
 
   const text = [
-    `Nuevo contacto: ${prettyPhone}`,
+    `Nuevo contacto: ${prettyPhone}${country ? ` (${country})` : ''}`,
     `WhatsApp: ${waLink}`,
     '',
     ...answers.map(({ question, answer }) => `${question} ${answer}`),
@@ -124,7 +149,7 @@ router.post('/', contactValidation, async (req, res) => {
     const { error } = await getResend().emails.send({
       from:    `MAO Systems Web <${fromEmail}>`,
       to:      [toEmail],
-      subject: `[maosystems.io] Nuevo contacto · ${prettyPhone}`,
+      subject: `[maosystems.io] Nuevo contacto · ${prettyPhone}${country ? ` · ${country}` : ''}`,
       html,
       text,
     })
