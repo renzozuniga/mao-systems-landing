@@ -34,7 +34,9 @@ const contactValidation = [
 
   body('website').optional(),
 
-  body('turnstileToken').optional().isString(),
+  // values: 'null' — the deployed client sent null when Turnstile had no keys,
+  // and plain optional() only skips undefined, which rejected every submission.
+  body('turnstileToken').optional({ values: 'null' }).isString(),
 ]
 
 // ── POST / ────────────────────────────────────────────────────────────────────
