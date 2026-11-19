@@ -31,6 +31,13 @@ img { display: block; max-width: 100%; }
 a { color: inherit; }
 button { font-family: inherit; }
 
+/* One continuous arena canvas behind every section: sections have no
+   backgrounds of their own, so there's no hard edge between them. */
+main {
+  background: linear-gradient(180deg,
+    #F1E9DA 0%, #EBE1CF 22%, #F1E9DA 42%, #EAE0CD 66%, #F1E9DA 88%, #EDE4D3 100%);
+}
+
 /* --- Section Layout --- */
 .section {
   padding: var(--space-32) var(--space-8);

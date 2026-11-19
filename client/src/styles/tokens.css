@@ -18,6 +18,24 @@
   --mao-forest-800: #082A20;
   --mao-forest-900: #051A14;
 
+  /* ─── BRAND · Jade (30% · brand) — default since 2026-11 ───────────────── */
+  --mao-jade-50:  #E6F0EE;
+  --mao-jade-100: #CDE1DC;
+  --mao-jade-200: #9DC4BB;
+  --mao-jade-300: #6AA79A;
+  --mao-jade-400: #3F8A7C;
+  --mao-jade-500: #1E7466;
+  --mao-jade-600: #155E52;   /* jade bosque · hover */
+  --mao-jade-700: #0E4F45;   /* jade profundo · brand */
+  --mao-jade-800: #0A3B34;
+  --mao-jade-900: #062722;
+
+  /* ─── ACCENT · Coral suave (10%) — only as light on the background ─────── */
+  --mao-coral:        #F08A6E;
+  --accent-glow:      rgba(240, 138, 110, 0.45);
+  --accent-glow-soft: rgba(240, 138, 110, 0.25);
+  --accent-glow-dark: rgba(240, 138, 110, 0.12);   /* on jade; more turns muddy */
+
   /* ─── BRAND · Graphite (alternate sober palette — toggleable) ──────────── */
   --mao-graphite-50:  #F4F4F2;
   --mao-graphite-100: #E7E7E3;
@@ -43,6 +61,13 @@
   --mao-stone-600:  #26241F;
   --mao-stone-700:  #15140F;
 
+  /* ─── NEUTRALS · Arena (60% · canvas) ──────────────────────────────────── */
+  --mao-arena:        #F1E9DA;
+  --mao-arena-deep:   #E8DFCD;
+  --mao-arena-paper:  #FFFDF8;
+  --mao-arena-line:   #DDD2BE;
+  --mao-arena-line-2: #CFC4AF;
+
   /* ─── SEMANTIC · Status ────────────────────────────────────────────────── */
   --mao-success:        #2E7D5F;
   --mao-success-soft:   #DDEBE3;
@@ -54,11 +79,11 @@
   --mao-info-soft:      #D9E2EC;
 
   /* ─── SEMANTIC ALIASES ─────────────────────────────────────────────────── */
-  --color-bg:            var(--mao-parchment);
-  --color-surface:       var(--mao-paper);
-  --color-surface-alt:   var(--mao-fog);
-  --color-border:        var(--mao-bone);
-  --color-border-strong: var(--mao-stone-100);
+  --color-bg:            var(--mao-arena);
+  --color-surface:       var(--mao-arena-paper);
+  --color-surface-alt:   var(--mao-arena-deep);
+  --color-border:        var(--mao-arena-line);
+  --color-border-strong: var(--mao-arena-line-2);
   --color-overlay:       rgba(15, 23, 20, 0.55);
 
   --fg-1:       var(--mao-stone-700);   /* primary text */
@@ -67,12 +92,12 @@
   --fg-4:       var(--mao-stone-300);   /* muted / placeholder */
   --fg-inverse: var(--mao-parchment);
 
-  --brand:        var(--mao-forest-700);
-  --brand-hover:  var(--mao-forest-600);
-  --brand-soft:   var(--mao-forest-50);
-  --brand-soft-2: var(--mao-forest-100);
-  --brand-accent: var(--mao-forest-300);
-  --brand-deep:   var(--mao-forest-800);
+  --brand:        var(--mao-jade-700);
+  --brand-hover:  var(--mao-jade-600);
+  --brand-soft:   var(--mao-jade-50);
+  --brand-soft-2: var(--mao-jade-100);
+  --brand-accent: var(--mao-jade-300);
+  --brand-deep:   var(--mao-jade-800);
 
   /* ─── TYPE · Families ──────────────────────────────────────────────────── */
   --font-sans:    "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -138,11 +163,11 @@
   --shadow-md:    0 4px 8px -2px rgba(20, 18, 14, 0.07), 0 2px 4px -2px rgba(20, 18, 14, 0.05);
   --shadow-lg:    0 12px 24px -8px rgba(20, 18, 14, 0.10), 0 4px 8px -4px rgba(20, 18, 14, 0.06);
   --shadow-xl:    0 24px 48px -12px rgba(20, 18, 14, 0.14), 0 8px 16px -8px rgba(20, 18, 14, 0.08);
-  --shadow-brand: 0 8px 24px -6px rgba(15, 61, 46, 0.28);
+  --shadow-brand: 0 8px 24px -6px rgba(14, 79, 69, 0.30);
 
-  --ring-brand:  0 0 0 3px rgba(15, 61, 46, 0.18);
+  --ring-brand:  0 0 0 3px rgba(14, 79, 69, 0.18);
   --ring-danger: 0 0 0 3px rgba(162, 58, 46, 0.20);
-  --ring-focus:  0 0 0 3px rgba(15, 61, 46, 0.30);
+  --ring-focus:  0 0 0 3px rgba(14, 79, 69, 0.30);
 
   /* ─── MOTION · slow, considered, no bounce ─────────────────────────────── */
   --ease-out:   cubic-bezier(0.22, 0.61, 0.36, 1);

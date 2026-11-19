@@ -5,47 +5,24 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  background: var(--bg-white);
+  /* Visible + transparent: the coral diagonal below spills into About, and
+     the page canvas (App.css) supplies the arena. */
+  isolation: isolate;
   padding-top: var(--navbar-height);
 }
 
-/* Ambient blobs */
-.hero__blobs { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-
-.hero__blob {
+/* Coral diagonal, mirrored into the next section: one glow anchored right and
+   centred on the hero's bottom edge (box 30% → -70%), fading to zero at the
+   box's top and bottom so it never shows a seam. */
+.hero::after {
+  content: '';
   position: absolute;
-  border-radius: 50%;
-  filter: blur(72px);
-}
-
-.hero__blob--1 {
-  width: 600px; height: 600px;
-  background: radial-gradient(circle, var(--mao-forest-100) 0%, rgba(210, 226, 217, 0) 70%);
-  top: -160px; right: -160px;
-  opacity: 0.7;
-  animation: blob-float 9s ease-in-out infinite;
-}
-
-.hero__blob--2 {
-  width: 340px; height: 340px;
-  background: radial-gradient(circle, var(--mao-forest-200) 0%, rgba(168, 199, 183, 0) 70%);
-  bottom: 60px; left: -100px;
-  opacity: 0.5;
-  animation: blob-float 12s ease-in-out infinite reverse;
-}
-
-.hero__blob--3 {
-  width: 200px; height: 200px;
-  background: radial-gradient(circle, var(--mao-forest-300) 0%, rgba(123, 184, 158, 0) 70%);
-  top: 40%; left: 40%;
-  opacity: 0.25;
-  animation: blob-float 7s ease-in-out infinite 2s;
-}
-
-@keyframes blob-float {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50%       { transform: translateY(-18px) scale(1.04); }
+  left: 0; right: 0;
+  top: 30%; bottom: -70%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(60% 50% at 100% 50%,
+    var(--accent-glow) 0%, rgba(240, 138, 110, 0.22) 45%, rgba(240, 138, 110, 0) 100%);
 }
 
 /* Layout */
@@ -167,7 +144,7 @@
 .hero__ring {
   position: absolute;
   width: 260px; height: 260px;
-  border: 1.5px solid rgba(15, 61, 46, 0.18);
+  border: 1.5px solid rgba(14, 79, 69, 0.18);
   border-radius: 50%;
   animation: ring-spin 18s linear infinite;
 }

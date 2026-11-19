@@ -20,12 +20,6 @@ export default function Hero() {
   return (
     <section className="hero" id="home" aria-label="MAO Systems — presentación">
 
-      {/* Ambient background blobs */}
-      <div className="hero__blobs" aria-hidden="true">
-        <div className="hero__blob hero__blob--1" />
-        <div className="hero__blob hero__blob--2" />
-        <div className="hero__blob hero__blob--3" />
-      </div>
 
       <div className="hero__container">
 
