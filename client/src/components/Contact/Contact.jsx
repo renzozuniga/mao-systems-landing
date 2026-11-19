@@ -1,43 +1,141 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './Contact.css'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 
-const INITIAL_FORM = { name: '', email: '', company: '', message: '' }
+/**
+ * Deliberately broad questions: one tap each, so visitors commit before we ask
+ * for anything personal. The long form this replaced was being abandoned halfway.
+ */
+const QUESTIONS = [
+  {
+    question: '¿Qué necesitas construir?',
+    options:  ['Una web o tienda online', 'Un sistema a medida para mi empresa', 'Aún no lo tengo claro'],
+  },
+  {
+    question: '¿En qué punto estás?',
+    options:  ['Tengo una idea', 'Ya tengo algo y quiero mejorarlo', 'Necesito resolver algo urgente'],
+  },
+  {
+    question: '¿Cuándo te gustaría empezar?',
+    options:  ['Este mes', 'En 1 a 3 meses', 'Solo estoy explorando'],
+  },
+]
+
+const KEYS        = ['A', 'B', 'C']
+const TOTAL_STEPS = QUESTIONS.length + 1   // questions + phone
+const PICK_MS     = 240                    // let the selected fill register before leaving
+const LEAVE_MS    = 260                    // matches .stepper__step--leaving transition
+
+/** "987654321" → "987 654 321" */
+const formatPhone = (digits) => digits.replace(/(\d{3})(?=\d)/g, '$1 ').trim()
 
 /**
- * Contact section with form (sends to server) and contact info.
+ * Contact section: info column + a step-by-step "carousel" that asks three
+ * one-tap questions and then only a phone number.
  */
 export default function Contact() {
-  const [form,     setForm]    = useState(INITIAL_FORM)
-  const [status,   setStatus]  = useState('idle')  // 'idle' | 'loading' | 'success' | 'error'
-  const [errorMsg, setErrorMsg] = useState('')
+  const [step,     setStep]     = useState(0)        // 0..2 questions, 3 phone, 4 done
+  const [answers,  setAnswers]  = useState([])
+  const [selected, setSelected] = useState(null)
+  const [leaving,  setLeaving]  = useState(false)
+  const [dir,      setDir]      = useState('fwd')
+  const [phone,    setPhone]    = useState('')
+  const [website,  setWebsite]  = useState('')       // honeypot — humans never see it
+  const [error,    setError]    = useState('')
+  const [status,   setStatus]   = useState('idle')   // 'idle' | 'sending'
 
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
+  const timers      = useRef([])
+  const headingRef  = useRef(null)
+  const interacted  = useRef(false)
+
+  useEffect(() => () => timers.current.forEach(clearTimeout), [])
+
+  // Move focus to each new question for keyboard and screen-reader users, but
+  // never on first render, which would yank the page down to this section.
+  useEffect(() => {
+    if (interacted.current) headingRef.current?.focus({ preventScroll: true })
+  }, [step])
+
+  const later = (fn, ms) => timers.current.push(setTimeout(fn, ms))
+
+  const goTo = (next, direction) => {
+    interacted.current = true
+    setDir(direction)
+    setLeaving(true)
+    later(() => {
+      setStep(next)
+      setSelected(null)
+      setLeaving(false)
+    }, LEAVE_MS)
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setStatus('loading')
-    setErrorMsg('')
+  const pick = (optionIndex) => {
+    if (step >= QUESTIONS.length || leaving || selected !== null) return
+    setSelected(optionIndex)
+    setAnswers((prev) => {
+      const copy = [...prev]
+      copy[step] = QUESTIONS[step].options[optionIndex]
+      return copy
+    })
+    later(() => goTo(step + 1, 'fwd'), PICK_MS)
+  }
 
+  const back = () => {
+    if (step === 0 || step > QUESTIONS.length || leaving) return
+    setError('')
+    goTo(step - 1, 'back')
+  }
+
+  const onKeyDown = (e) => {
+    if (e.target.tagName === 'INPUT' || e.metaKey || e.ctrlKey || e.altKey) return
+    const i = KEYS.indexOf(e.key.toUpperCase())
+    if (i !== -1) pick(i)
+  }
+
+  const onPhoneChange = (e) => {
+    setPhone(e.target.value.replace(/\D/g, '').slice(0, 9))
+    if (error) setError('')
+  }
+
+  const submit = async (e) => {
+    e.preventDefault()
+    if (!/^9\d{8}$/.test(phone)) {
+      setError('Ingresa un celular de 9 dígitos que empiece con 9.')
+      return
+    }
+    setStatus('sending')
+    setError('')
     try {
-      const res  = await fetch(`${API_URL}/api/contact`, {
+      const res = await fetch(`${API_URL}/api/contact`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(form),
+        body:    JSON.stringify({
+          answers: QUESTIONS.map((q, i) => ({ question: q.question, answer: answers[i] })),
+          phone,
+          website,
+        }),
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.message || 'Error al enviar el mensaje.')
-      setStatus('success')
-      setForm(INITIAL_FORM)
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.message)
+      setStatus('idle')
+      goTo(TOTAL_STEPS, 'fwd')
     } catch (err) {
-      setStatus('error')
-      setErrorMsg(err.message || 'No se pudo enviar el mensaje. Intenta nuevamente.')
+      setStatus('idle')
+      setError(err.message || 'No pudimos enviar tu número. Inténtalo otra vez.')
     }
   }
+
+  const restart = () => {
+    setAnswers([])
+    setPhone('')
+    setError('')
+    goTo(0, 'back')
+  }
+
+  const progress = Math.min(step + 1, TOTAL_STEPS)
+  const isQuestion = step < QUESTIONS.length
+  const isDone = step >= TOTAL_STEPS
 
   return (
     <section className="contact section" id="contact">
@@ -50,8 +148,8 @@ export default function Contact() {
             ¿Tienes un proyecto<br />en mente?
           </h2>
           <p className="contact__body">
-            Cuéntanos qué necesitas y te respondemos en menos de 24 horas con
-            una propuesta inicial sin compromiso.
+            Responde tres preguntas rápidas y déjanos tu número. Te escribimos
+            por WhatsApp en menos de 24 horas, sin compromiso.
           </p>
 
           <div className="contact__items">
@@ -109,83 +207,133 @@ export default function Contact() {
               </span>
               <div>
                 <span className="contact__item-label">Modalidad</span>
-                <span className="contact__item-value">Trabajo remoto · Perú 🇵🇪</span>
+                <span className="contact__item-value">Trabajo remoto · Perú</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right: form */}
-        <div className="contact__form-wrap animate-on-scroll delay-2">
-          {status === 'success' ? (
-            <div className="contact__success">
-              <span className="contact__success-icon">✓</span>
-              <h3>¡Mensaje enviado!</h3>
-              <p>Gracias por contactarnos. Te responderemos en menos de 24 horas.</p>
-              <button className="btn btn--outline btn--md" onClick={() => setStatus('idle')}>
-                Enviar otro mensaje
-              </button>
-            </div>
-          ) : (
-            <form className="contact__form" onSubmit={handleSubmit} noValidate>
-              <div className="contact__field">
-                <label htmlFor="name" className="contact__label">Nombre completo *</label>
-                <input
-                  id="name" name="name" type="text"
-                  className="contact__input"
-                  placeholder="Tu nombre"
-                  value={form.name} onChange={handleChange}
-                  required autoComplete="name"
-                />
+        {/* Right: stepper */}
+        <div className="stepper animate-on-scroll delay-2" onKeyDown={onKeyDown}>
+          {!isDone && (
+            <>
+              <div className="stepper__meta">
+                <span>Paso {String(progress).padStart(2, '0')} / {String(TOTAL_STEPS).padStart(2, '0')}</span>
+                <span>Menos de 30 s</span>
               </div>
-
-              <div className="contact__field">
-                <label htmlFor="email" className="contact__label">Correo electrónico *</label>
-                <input
-                  id="email" name="email" type="email"
-                  className="contact__input"
-                  placeholder="tu@empresa.com"
-                  value={form.email} onChange={handleChange}
-                  required autoComplete="email"
-                />
-              </div>
-
-              <div className="contact__field">
-                <label htmlFor="company" className="contact__label">Empresa</label>
-                <input
-                  id="company" name="company" type="text"
-                  className="contact__input"
-                  placeholder="Nombre de tu empresa (opcional)"
-                  value={form.company} onChange={handleChange}
-                  autoComplete="organization"
-                />
-              </div>
-
-              <div className="contact__field">
-                <label htmlFor="message" className="contact__label">Mensaje *</label>
-                <textarea
-                  id="message" name="message"
-                  className="contact__input contact__textarea"
-                  placeholder="Cuéntanos sobre tu proyecto o lo que necesitas..."
-                  rows={5}
-                  value={form.message} onChange={handleChange}
-                  required
-                />
-              </div>
-
-              {status === 'error' && (
-                <p className="contact__error">{errorMsg}</p>
-              )}
-
-              <button
-                type="submit"
-                className="btn btn--primary btn--lg contact__submit"
-                disabled={status === 'loading'}
+              <div
+                className="stepper__bar"
+                role="progressbar"
+                aria-label="Progreso"
+                aria-valuemin={1}
+                aria-valuemax={TOTAL_STEPS}
+                aria-valuenow={progress}
               >
-                {status === 'loading' ? 'Enviando…' : 'Enviar mensaje'}
-              </button>
-            </form>
+                <span style={{ transform: `scaleX(${progress / TOTAL_STEPS})` }} />
+              </div>
+            </>
           )}
+
+          <div
+            key={step}
+            className={`stepper__step stepper__step--${dir}${leaving ? ' stepper__step--leaving' : ''}`}
+          >
+            {isQuestion && (
+              <>
+                <h3 className="stepper__question" ref={headingRef} tabIndex={-1}>
+                  {QUESTIONS[step].question}
+                </h3>
+                <div className="stepper__options" role="group" aria-label={QUESTIONS[step].question}>
+                  {QUESTIONS[step].options.map((option, i) => (
+                    <button
+                      key={option}
+                      type="button"
+                      className={`stepper__option${selected === i || (selected === null && answers[step] === option) ? ' is-selected' : ''}`}
+                      style={{ '--i': i }}
+                      onClick={() => pick(i)}
+                    >
+                      <kbd className="stepper__key" aria-hidden="true">{KEYS[i]}</kbd>
+                      <span>{option}</span>
+                      <svg className="stepper__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M5 12h14M13 6l6 6-6 6"/>
+                      </svg>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {step === QUESTIONS.length && (
+              <form className="stepper__phone-form" onSubmit={submit} noValidate>
+                <h3 className="stepper__question" ref={headingRef} tabIndex={-1}>
+                  Listo. ¿A qué número te escribimos?
+                </h3>
+                <label htmlFor="contact-phone" className="visually-hidden">Número de celular</label>
+                <div className={`stepper__phone${error ? ' has-error' : ''}`}>
+                  <span className="stepper__prefix">+51</span>
+                  <input
+                    id="contact-phone"
+                    type="tel"
+                    inputMode="numeric"
+                    autoComplete="tel-national"
+                    placeholder="987 654 321"
+                    value={formatPhone(phone)}
+                    onChange={onPhoneChange}
+                    aria-invalid={Boolean(error)}
+                    aria-describedby="contact-phone-help"
+                  />
+                </div>
+                {/* Honeypot: off-screen field bots tend to fill in. */}
+                <input
+                  type="text"
+                  name="website"
+                  className="stepper__hp"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                  aria-hidden="true"
+                />
+                <p className="stepper__error" role="alert">{error}</p>
+                <button type="submit" className="btn btn--primary btn--lg stepper__submit" disabled={status === 'sending'}>
+                  {status === 'sending' ? 'Enviando…' : 'Enviar mi número'}
+                </button>
+                <p className="stepper__help" id="contact-phone-help">
+                  Te escribimos por WhatsApp en menos de 24 h. Solo usamos tu número
+                  para esta conversación.
+                </p>
+              </form>
+            )}
+
+            {isDone && (
+              <div className="stepper__done">
+                <svg className="stepper__check" viewBox="0 0 56 56" aria-hidden="true">
+                  <circle cx="28" cy="28" r="26" />
+                  <path d="M17 29l7 7 15-16" />
+                </svg>
+                <h3 className="stepper__question" ref={headingRef} tabIndex={-1}>
+                  Recibido. Te escribimos pronto.
+                </h3>
+                <p className="stepper__summary">{answers.join(' · ')}</p>
+                <button type="button" className="stepper__link" onClick={restart}>
+                  Empezar de nuevo
+                </button>
+              </div>
+            )}
+          </div>
+
+          {step > 0 && !isDone && (
+            <div className="stepper__footer">
+              <button type="button" className="stepper__link" onClick={back}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M19 12H5M11 18l-6-6 6-6"/>
+                </svg>
+                Volver
+              </button>
+              {isQuestion && <span className="stepper__hint">Teclas A · B · C</span>}
+            </div>
+          )}
+          {step === 0 && <div className="stepper__footer"><span /><span className="stepper__hint">Teclas A · B · C</span></div>}
         </div>
 
       </div>
