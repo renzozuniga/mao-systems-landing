@@ -14,6 +14,7 @@
     "express-rate-limit": "^8.7.5",
     "express-validator": "^7.2.1",
     "helmet": "^8.0.0",
+    "libphonenumber-js": "^1.13.16",
     "resend": "^4.0.1"
   },
   "devDependencies": {
