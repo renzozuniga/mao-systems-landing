@@ -2,10 +2,15 @@ import 'dotenv/config'
 import express    from 'express'
 import cors       from 'cors'
 import helmet     from 'helmet'
+import { rateLimit, ipKeyGenerator } from 'express-rate-limit'
 import contactRouter from './routes/contact.js'
 
 const app  = express()
 const PORT = process.env.PORT || 5000
+
+// Render terminates TLS in front of the app; trust that one hop so req.ip is
+// the caller rather than Render's proxy.
+app.set('trust proxy', 1)
 
 // ── Security headers ──────────────────────────────────────────────────────────
 app.use(helmet())
@@ -32,8 +37,21 @@ app.use(cors({
 app.use(express.json({ limit: '16kb' }))
 
 // ── Routes ────────────────────────────────────────────────────────────────────
+// A real visitor sends the stepper once; this caps scripted floods that would
+// otherwise burn the Resend quota and fill the inbox.
+const contactLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: Number(process.env.CONTACT_RATE_LIMIT) || 5,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  // api.maosystems.io sits behind Cloudflare, so the visitor's address is in
+  // cf-connecting-ip; fall back to req.ip for direct and local requests.
+  keyGenerator: (req) => req.get('cf-connecting-ip') || ipKeyGenerator(req.ip),
+  message: { message: 'Recibimos varios envíos desde tu conexión. Inténtalo en una hora o escríbenos a maosystems.dev@gmail.com.' },
+})
+
 app.get('/health', (_req, res) => res.json({ status: 'ok', service: 'mao-systems-api' }))
-app.use('/api/contact', contactRouter)
+app.use('/api/contact', contactLimiter, contactRouter)
 
 // ── 404 ───────────────────────────────────────────────────────────────────────
 app.use((_req, res) => res.status(404).json({ message: 'Route not found' }))

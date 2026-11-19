@@ -1,6 +1,7 @@
 import express              from 'express'
 import { Resend }            from 'resend'
 import { body, validationResult } from 'express-validator'
+import { verifyTurnstile }   from '../lib/turnstile.js'
 
 const router = express.Router()
 
@@ -32,6 +33,8 @@ const contactValidation = [
     .matches(/^9\d{8}$/).withMessage('Ingresa un celular de 9 dígitos que empiece con 9.'),
 
   body('website').optional(),
+
+  body('turnstileToken').optional().isString(),
 ]
 
 // ── POST / ────────────────────────────────────────────────────────────────────
@@ -39,9 +42,11 @@ const contactValidation = [
  * Receives the contact stepper's answers plus a Peruvian mobile number and
  * emails them to CONTACT_TO_EMAIL via Resend.
  *
- * @param {object} req.body - { answers: [{ question, answer }], phone, website? }
+ * @param {object} req.body - { answers: [{ question, answer }], phone, website?, turnstileToken? }
  * @returns {200} { message }
+ * @returns {403} { message } when Turnstile verification fails
  * @returns {422} { message, errors[] } on validation failure
+ * @returns {429} { message } when the per-IP rate limit is hit (see app.js)
  * @returns {500} { message } on send error
  */
 router.post('/', contactValidation, async (req, res) => {
@@ -54,12 +59,20 @@ router.post('/', contactValidation, async (req, res) => {
     })
   }
 
-  const { answers, phone, website } = req.body
+  const { answers, phone, website, turnstileToken } = req.body
 
   // Honeypot filled → almost certainly a bot. Answer 200 so it doesn't retry.
   if (website) {
     console.warn('[CONTACT] Honeypot triggered, dropping submission')
     return res.status(200).json({ message: 'Recibido.' })
+  }
+
+  const human = await verifyTurnstile(turnstileToken, req.get('cf-connecting-ip') || req.ip)
+  if (!human.ok) {
+    console.warn('[CONTACT] Turnstile rejected:', human.codes)
+    return res.status(403).json({
+      message: 'No pudimos verificar que no eres un robot. Recarga la página e inténtalo otra vez.',
+    })
   }
 
   const prettyPhone = `+51 ${phone.replace(/(\d{3})(?=\d)/g, '$1 ')}`

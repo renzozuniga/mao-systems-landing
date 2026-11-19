@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import useTurnstile from './useTurnstile'
 import './Contact.css'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
@@ -48,6 +49,10 @@ export default function Contact() {
   const timers      = useRef([])
   const headingRef  = useRef(null)
   const interacted  = useRef(false)
+  const captchaRef  = useRef(null)
+
+  // Mounted only on the phone step so the challenge runs while the visitor types.
+  const turnstile = useTurnstile(captchaRef, step === QUESTIONS.length)
 
   useEffect(() => () => timers.current.forEach(clearTimeout), [])
 
@@ -107,6 +112,10 @@ export default function Contact() {
     setStatus('sending')
     setError('')
     try {
+      const turnstileToken = await turnstile.getToken()
+      if (turnstile.enabled && !turnstileToken) {
+        throw new Error('No pudimos verificar que no eres un robot. Recarga la página e inténtalo otra vez.')
+      }
       const res = await fetch(`${API_URL}/api/contact`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -114,6 +123,7 @@ export default function Contact() {
           answers: QUESTIONS.map((q, i) => ({ question: q.question, answer: answers[i] })),
           phone,
           website,
+          turnstileToken,
         }),
       })
       const data = await res.json().catch(() => ({}))
@@ -123,6 +133,7 @@ export default function Contact() {
     } catch (err) {
       setStatus('idle')
       setError(err.message || 'No pudimos enviar tu número. Inténtalo otra vez.')
+      turnstile.reset()
     }
   }
 
@@ -293,6 +304,7 @@ export default function Contact() {
                   onChange={(e) => setWebsite(e.target.value)}
                   aria-hidden="true"
                 />
+                <div ref={captchaRef} className="stepper__captcha" />
                 <p className="stepper__error" role="alert">{error}</p>
                 <button type="submit" className="btn btn--primary btn--lg stepper__submit" disabled={status === 'sending'}>
                   {status === 'sending' ? 'Enviando…' : 'Enviar mi número'}
