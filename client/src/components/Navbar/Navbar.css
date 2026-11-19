@@ -15,6 +15,21 @@
   box-shadow: 0 1px 0 0 var(--color-border);
 }
 
+/* Reading progress hairline along the bottom edge of the navbar. */
+.navbar__progress {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2px;
+  background: var(--brand);
+  transform: scaleX(0);
+  transform-origin: left center;
+  opacity: 0;
+  transition: opacity var(--t-base);
+  pointer-events: none;
+}
+
+.navbar--scrolled .navbar__progress { opacity: 1; }
+
 .navbar__container {
   max-width: var(--container-max);
   margin: 0 auto;

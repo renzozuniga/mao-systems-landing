@@ -1,3 +1,4 @@
+import CountUp from '../CountUp/CountUp'
 import './About.css'
 
 const STATS = [
@@ -36,7 +37,7 @@ export default function About() {
           <div className="about__stats">
             {STATS.map(({ value, label }) => (
               <div className="about__stat" key={label}>
-                <span className="about__stat-value">{value}</span>
+                <CountUp className="about__stat-value" value={value} />
                 <span className="about__stat-label">{label}</span>
               </div>
             ))}

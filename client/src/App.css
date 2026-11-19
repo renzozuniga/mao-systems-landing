@@ -158,25 +158,121 @@ button { font-family: inherit; }
 }
 
 /* --- Scroll animations --- */
+/* The entrance transition only applies until `.reveal-done` (set from App.jsx).
+   The :not() bumps specificity above single-class component rules like
+   `.service-card { transition }`, which used to silently cancel the fade; once
+   done, those component transitions take over so hovers stay instant. Hidden
+   styles also live under :not(.is-visible) so the revealed state sets no
+   transform of its own and :hover lifts keep working. */
 .animate-on-scroll {
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity var(--dur-slow) var(--ease-out),
-              transform var(--dur-slow) var(--ease-out);
+  --reveal-delay: 0s;
 }
 
-.animate-on-scroll.is-visible {
-  opacity: 1;
-  transform: translateY(0);
+.animate-on-scroll:not(.reveal-done) {
+  transition: opacity var(--dur-page) var(--ease-out) var(--reveal-delay),
+              transform var(--dur-page) var(--ease-out) var(--reveal-delay),
+              clip-path var(--dur-page) var(--ease-out) var(--reveal-delay);
+}
+
+.animate-on-scroll:not(.is-visible) {
+  opacity: 0;
+  transform: translateY(24px);
 }
 
 /* Stagger delays — 80ms increments per design system */
-.animate-on-scroll.delay-1 { transition-delay: 0.08s; }
-.animate-on-scroll.delay-2 { transition-delay: 0.16s; }
-.animate-on-scroll.delay-3 { transition-delay: 0.24s; }
-.animate-on-scroll.delay-4 { transition-delay: 0.32s; }
-.animate-on-scroll.delay-5 { transition-delay: 0.40s; }
-.animate-on-scroll.delay-6 { transition-delay: 0.48s; }
+.animate-on-scroll.delay-1 { --reveal-delay: 0.08s; }
+.animate-on-scroll.delay-2 { --reveal-delay: 0.16s; }
+.animate-on-scroll.delay-3 { --reveal-delay: 0.24s; }
+.animate-on-scroll.delay-4 { --reveal-delay: 0.32s; }
+.animate-on-scroll.delay-5 { --reveal-delay: 0.40s; }
+.animate-on-scroll.delay-6 { --reveal-delay: 0.48s; }
+
+/* Curtain: titles rise from behind a mask, a beat after their container. */
+.animate-on-scroll:not(.reveal-done) .section__title {
+  transition: clip-path var(--dur-page) var(--ease-out) calc(var(--reveal-delay) + 0.1s),
+              transform var(--dur-page) var(--ease-out) calc(var(--reveal-delay) + 0.1s);
+}
+
+.animate-on-scroll:not(.is-visible) .section__title {
+  clip-path: inset(0 0 100% 0);
+  transform: translateY(0.5em);
+}
+
+.animate-on-scroll.is-visible .section__title {
+  /* Negative insets keep descenders and accents from being shaved off. */
+  clip-path: inset(-0.2em -0.2em -0.3em -0.2em);
+}
+
+/* Eyebrow rule draws in from the left. */
+.section__eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 1.5px;
+  margin-right: var(--sp-2);
+  vertical-align: middle;
+  background: currentColor;
+  transform-origin: left center;
+}
+
+.animate-on-scroll:not(.reveal-done) .section__eyebrow::before {
+  transition: transform var(--dur-page) var(--ease-out) var(--reveal-delay);
+}
+
+.animate-on-scroll:not(.is-visible) .section__eyebrow::before {
+  transform: scaleX(0);
+}
+
+/* Wipe: project cards uncover bottom-up instead of only fading.
+   Done with a cover pseudo-element rather than clip-path on the card: a fully
+   clipped card has zero visible area, so IntersectionObserver never reports
+   it and the card would stay hidden forever. Set --reveal-cover to the
+   section's background. */
+.animate-on-scroll.reveal-wipe {
+  position: relative;
+}
+
+.animate-on-scroll.reveal-wipe:not(.is-visible) {
+  opacity: 1;
+  transform: translateY(16px);
+}
+
+.animate-on-scroll.reveal-wipe::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: 2;
+  background: var(--reveal-cover, var(--color-bg));
+  transform-origin: top center;
+  pointer-events: none;
+}
+
+.animate-on-scroll.reveal-wipe:not(.reveal-done)::after {
+  transition: transform var(--dur-page) var(--ease-inout) var(--reveal-delay);
+}
+
+.animate-on-scroll.reveal-wipe.is-visible::after {
+  transform: scaleY(0);
+}
+
+.animate-on-scroll.reveal-wipe.reveal-done::after {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  .animate-on-scroll,
+  .animate-on-scroll .section__title,
+  .animate-on-scroll .section__eyebrow::before {
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+
+  .animate-on-scroll.reveal-wipe::after { display: none; }
+}
 
 /* --- Responsive helpers --- */
 @media (max-width: 768px) {
