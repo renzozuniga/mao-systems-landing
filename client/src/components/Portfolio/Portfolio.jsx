@@ -68,7 +68,7 @@ export default function Portfolio() {
           {PROJECTS.map(({ gradient, tags, title, description, status, url }, i) => (
             <article
               key={title}
-              className={`project-card animate-on-scroll delay-${i + 1}${url ? ' project-card--linked' : ''}`}
+              className={`project-card animate-on-scroll reveal-wipe delay-${i + 1}${url ? ' project-card--linked' : ''}`}
             >
               {/* Color header */}
               <div className="project-card__header" style={{ background: gradient }}>

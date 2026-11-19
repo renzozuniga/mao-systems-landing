@@ -19,8 +19,12 @@ function App() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible')
-            observer.unobserve(entry.target)
+            const el = entry.target
+            el.classList.add('is-visible')
+            observer.unobserve(el)
+            // Hand transitions back to the component once the staggered entrance
+            // has played (max delay 0.48s + title beat + 600ms), so hovers aren't lagged.
+            setTimeout(() => el.classList.add('reveal-done'), 1300)
           }
         })
       },

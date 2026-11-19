@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './Navbar.css'
 
 /** Navigation links definition */
@@ -16,10 +16,30 @@ export default function Navbar() {
   const [scrolled, setScrolled]   = useState(false)
   const [menuOpen, setMenuOpen]   = useState(false)
 
+  const progressRef = useRef(null)
+
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24)
+    let frame = 0
+    const onScroll = () => {
+      setScrolled(window.scrollY > 24)
+      // Write the progress bar straight to the DOM (once per frame) instead of
+      // through state, so scrolling doesn't re-render the navbar every pixel.
+      if (frame) return
+      frame = requestAnimationFrame(() => {
+        frame = 0
+        const max = document.documentElement.scrollHeight - window.innerHeight
+        const p = max > 0 ? Math.min(window.scrollY / max, 1) : 0
+        if (progressRef.current) progressRef.current.style.transform = `scaleX(${p})`
+      })
+    }
+    onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    window.addEventListener('resize', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      cancelAnimationFrame(frame)
+    }
   }, [])
 
   // Lock body scroll when mobile menu is open
@@ -32,6 +52,7 @@ export default function Navbar() {
 
   return (
     <header className={`navbar${scrolled ? ' navbar--scrolled' : ''}`}>
+      <div className="navbar__progress" ref={progressRef} aria-hidden="true" />
       <div className="navbar__container">
 
         {/* Logo */}
