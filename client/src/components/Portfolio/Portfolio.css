@@ -1,5 +1,7 @@
 .portfolio {
   background: var(--bg-light);
+  /* Card wipe cover must match this background to read as an uncover. */
+  --reveal-cover: var(--bg-light);
 }
 
 .portfolio__grid {

@@ -223,15 +223,40 @@ button { font-family: inherit; }
   transform: scaleX(0);
 }
 
-/* Wipe: project cards uncover bottom-up instead of only fading. */
-.animate-on-scroll.reveal-wipe:not(.is-visible) {
-  opacity: 1;
-  transform: none;
-  clip-path: inset(100% 0 0 0 round var(--radius-2xl));
+/* Wipe: project cards uncover bottom-up instead of only fading.
+   Done with a cover pseudo-element rather than clip-path on the card: a fully
+   clipped card has zero visible area, so IntersectionObserver never reports
+   it and the card would stay hidden forever. Set --reveal-cover to the
+   section's background. */
+.animate-on-scroll.reveal-wipe {
+  position: relative;
 }
 
-.animate-on-scroll.reveal-wipe.is-visible:not(.reveal-done) {
-  clip-path: inset(0 0 0 0 round var(--radius-2xl));
+.animate-on-scroll.reveal-wipe:not(.is-visible) {
+  opacity: 1;
+  transform: translateY(16px);
+}
+
+.animate-on-scroll.reveal-wipe::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: 2;
+  background: var(--reveal-cover, var(--color-bg));
+  transform-origin: top center;
+  pointer-events: none;
+}
+
+.animate-on-scroll.reveal-wipe:not(.reveal-done)::after {
+  transition: transform var(--dur-page) var(--ease-inout) var(--reveal-delay);
+}
+
+.animate-on-scroll.reveal-wipe.is-visible::after {
+  transform: scaleY(0);
+}
+
+.animate-on-scroll.reveal-wipe.reveal-done::after {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -245,6 +270,8 @@ button { font-family: inherit; }
     transform: none !important;
     clip-path: none !important;
   }
+
+  .animate-on-scroll.reveal-wipe::after { display: none; }
 }
 
 /* --- Responsive helpers --- */
