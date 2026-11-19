@@ -123,7 +123,8 @@ export default function Contact() {
           answers: QUESTIONS.map((q, i) => ({ question: q.question, answer: answers[i] })),
           phone,
           website,
-          turnstileToken,
+          // Omit rather than send null while Turnstile has no site key.
+          ...(turnstileToken && { turnstileToken }),
         }),
       })
       const data = await res.json().catch(() => ({}))
