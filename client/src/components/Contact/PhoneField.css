@@ -68,6 +68,9 @@
 
 .phone__field input {
   flex: 1;
+  /* width: 0 drops the input's intrinsic ~20-character width, which otherwise
+     stretched the whole contact column past the screen on phones. */
+  width: 0;
   min-width: 0;
   height: 60px;
   padding: 0 var(--sp-4);
@@ -116,6 +119,7 @@
 
 .phone__search input {
   flex: 1;
+  width: 0;
   min-width: 0;
   height: 48px;
   border: 0;

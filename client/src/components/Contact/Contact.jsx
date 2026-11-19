@@ -6,11 +6,23 @@ import './Contact.css'
 const loadPhoneField = () => import('./PhoneField')
 const PhoneField = lazy(loadPhoneField)
 
-/** Country from the browser language (es-MX → MX) without loading the phone chunk. */
+/**
+ * Starting country from the visitor's time zone, which says where they are
+ * (browser language doesn't: many people in Peru browse in en-US). Covers the
+ * frequent markets; everyone else starts on Peru and can change it.
+ */
+const TZ_COUNTRY = {
+  'America/Lima': 'PE', 'America/Mexico_City': 'MX', 'America/Monterrey': 'MX',
+  'America/Bogota': 'CO', 'America/Santiago': 'CL', 'America/Guayaquil': 'EC',
+  'America/La_Paz': 'BO', 'Europe/Madrid': 'ES',
+}
 const initialCountry = () => {
-  const langs = typeof navigator !== 'undefined' ? navigator.languages || [navigator.language] : []
-  const region = langs.map((l) => (l || '').split('-')[1]).find((r) => /^[A-Za-z]{2}$/.test(r || ''))
-  return region ? region.toUpperCase() : 'PE'
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''
+    if (TZ_COUNTRY[tz]) return TZ_COUNTRY[tz]
+    if (tz.startsWith('America/Argentina/') || tz === 'America/Buenos_Aires') return 'AR'
+  } catch { /* very old browsers: fall through */ }
+  return 'PE'
 }
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
