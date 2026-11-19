@@ -300,6 +300,11 @@
 }
 
 @media (max-width: 480px) {
-  .hero__container { padding: var(--space-12) var(--space-5); }
+  .hero__container { padding: var(--space-12) var(--space-5); gap: var(--space-6); }
   .hero__badge--1, .hero__badge--2 { display: none; }
+
+  /* Compact mark on phones so the headline and CTAs reach the first screen. */
+  .hero__visual { height: 160px; }
+  .hero__icon   { width: 88px; height: 88px; }
+  .hero__ring   { width: 136px; height: 136px; }
 }
