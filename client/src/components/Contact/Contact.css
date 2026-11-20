@@ -1,5 +1,16 @@
 .contact {
-  background: var(--bg-white);
+  position: relative;
+  isolation: isolate;
+}
+
+/* Coral halo behind the stepper card. */
+.contact::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(42% 40% at 80% 55%, rgba(240, 138, 110, 0.32) 0%, rgba(240, 138, 110, 0.14) 50%, rgba(240, 138, 110, 0) 100%);
 }
 
 .contact__container {

@@ -1,5 +1,8 @@
 .footer {
-  background: var(--bg-dark);
+  /* Hard top edge on purpose; only a faint coral reflection inside. */
+  background:
+    radial-gradient(70% 110% at 100% 0%, var(--accent-glow-dark) 0%, rgba(240, 138, 110, 0) 60%),
+    var(--bg-dark);
   color: rgba(255, 255, 255, 0.75);
   font-size: var(--font-size-sm);
 }

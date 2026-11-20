@@ -1,5 +1,7 @@
 .about {
-  background: var(--bg-green-light);
+  /* Transparent: the page canvas (App.css) paints one continuous arena gradient. */
+  position: relative;
+  isolation: isolate;
 }
 
 .about__container {
@@ -24,7 +26,7 @@
   gap: var(--space-10);
   margin-top: var(--space-10);
   padding-top: var(--space-8);
-  border-top: 1px solid rgba(15, 61, 46, 0.2);
+  border-top: 1px solid rgba(14, 79, 69, 0.2);
 }
 
 .about__stat {
@@ -55,7 +57,9 @@
 }
 
 .about__card {
-  background: var(--bg-dark);
+  background:
+    radial-gradient(70% 110% at 100% 0%, var(--accent-glow-dark) 0%, rgba(240, 138, 110, 0) 60%),
+    var(--bg-dark);
   border-radius: var(--radius-2xl);
   padding: var(--space-8);
   display: flex;

@@ -1,5 +1,16 @@
 .services {
-  background: var(--bg-white);
+  position: relative;
+  isolation: isolate;
+}
+
+/* Coral aura behind the heading; fades out inside the section (no seams). */
+.services::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(closest-side at 50% 16%, rgba(240, 138, 110, 0.24) 0%, rgba(240, 138, 110, 0) 100%);
 }
 
 /*
@@ -17,7 +28,7 @@
 
 .service-card {
   grid-column: span 2;
-  background: var(--bg-white);
+  background: var(--color-surface);
   border: 1px solid rgba(0, 0, 0, 0.07);
   border-radius: var(--radius-2xl);
   padding: var(--space-8);
@@ -32,7 +43,7 @@
 .service-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
-  border-color: rgba(15, 61, 46, 0.2);
+  border-color: rgba(14, 79, 69, 0.25);
 }
 
 /* Center row 2: card 4 ocupa cols 2-4, card 5 ocupa cols 4-6 */

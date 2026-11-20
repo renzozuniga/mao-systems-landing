@@ -1,7 +1,16 @@
 .portfolio {
-  background: var(--bg-light);
-  /* Card wipe cover must match this background to read as an uncover. */
-  --reveal-cover: var(--bg-light);
+  position: relative;
+  isolation: isolate;
+}
+
+/* Coral light rising from the left, behind the first cards. */
+.portfolio::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(45% 35% at 0% 55%, rgba(240, 138, 110, 0.28) 0%, rgba(240, 138, 110, 0.12) 50%, rgba(240, 138, 110, 0) 100%);
 }
 
 .portfolio__grid {
@@ -12,7 +21,7 @@
 
 /* Project card */
 .project-card {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: var(--radius-2xl);
   overflow: hidden;
   border: 1px solid rgba(0,0,0,0.06);
