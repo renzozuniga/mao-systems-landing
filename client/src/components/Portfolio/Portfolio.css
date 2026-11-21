@@ -39,17 +39,42 @@
 
 /* Gradient header */
 .project-card__header {
-  height: 140px;
+  aspect-ratio: 2 / 1;
   position: relative;
+  overflow: hidden;
   display: flex;
   align-items: flex-end;
   padding: var(--space-4) var(--space-5);
 }
 
+.project-card__shot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+  transition: transform 0.6s var(--ease-out, ease-out);
+}
+
+/* Darkens only the bottom edge so the white status pill stays readable on light screenshots */
+.project-card__header:has(.project-card__shot:not([hidden]))::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(12, 32, 26, 0.55) 0%, rgba(12, 32, 26, 0) 45%);
+  pointer-events: none;
+}
+
+.project-card--linked:hover .project-card__shot { transform: scale(1.04); }
+
+.project-card__status,
+.project-card__header-icon { z-index: 1; }
+
 .project-card__status {
   display: inline-flex;
   padding: var(--space-1) var(--space-3);
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(12, 32, 26, 0.45);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255,255,255,0.3);
   border-radius: var(--radius-full);

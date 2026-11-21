@@ -5,6 +5,7 @@ const PROJECTS = [
     gradient: 'linear-gradient(135deg, #2563EB 0%, #7C3AED 100%)',
     tags: ['Angular', 'Node.js', 'MongoDB'],
     title: 'TaskBoard',
+    image: '/assets/portfolio/taskboard.jpg',
     description:
       'Sistema de gestión de tareas estilo Kanban con drag & drop, asignación de responsables y seguimiento en tiempo real.',
     status: 'En vivo',
@@ -14,6 +15,7 @@ const PROJECTS = [
     gradient: 'linear-gradient(135deg, #0891B2 0%, #0E7490 100%)',
     tags: ['Angular', 'Python', 'FastAPI'],
     title: 'Analytics Dashboard',
+    image: '/assets/portfolio/analytics.jpg',
     description:
       'Panel de métricas empresariales con gráficas interactivas, filtros dinámicos y exportación a Excel para equipos de operaciones.',
     status: 'En vivo',
@@ -23,6 +25,7 @@ const PROJECTS = [
     gradient: 'linear-gradient(135deg, #16A34A 0%, #15803D 100%)',
     tags: ['Python', 'FastAPI', 'Swagger'],
     title: 'REST API Core',
+    image: '/assets/portfolio/rest-api.jpg',
     description:
       'API REST con autenticación JWT, roles de usuario, documentación automática con Swagger y cobertura de pruebas al 90%.',
     status: 'En vivo',
@@ -32,6 +35,7 @@ const PROJECTS = [
     gradient: 'linear-gradient(135deg, #EA580C 0%, #DC2626 100%)',
     tags: ['React', 'Node.js', 'Vite'],
     title: 'MAO Systems Landing',
+    image: '/assets/portfolio/landing.jpg',
     description:
       'Identidad digital corporativa con landing page profesional, formulario de contacto y despliegue continuo en maosystems.io.',
     status: 'Este sitio',
@@ -40,6 +44,7 @@ const PROJECTS = [
     gradient: 'linear-gradient(135deg, #9333EA 0%, #DB2777 100%)',
     tags: ['Angular', 'Node.js', 'PostgreSQL'],
     title: 'Mini CRM',
+    image: '/assets/portfolio/crm.jpg',
     description:
       'Gestión de clientes y pipeline de ventas para PYMEs: contactos, seguimiento de oportunidades y reportes de cierre.',
     status: 'En vivo',
@@ -65,13 +70,23 @@ export default function Portfolio() {
         </header>
 
         <div className="portfolio__grid">
-          {PROJECTS.map(({ gradient, tags, title, description, status, url }, i) => (
+          {PROJECTS.map(({ gradient, image, tags, title, description, status, url }, i) => (
             <article
               key={title}
               className={`project-card animate-on-scroll delay-${i + 1}${url ? ' project-card--linked' : ''}`}
             >
-              {/* Color header */}
+              {/* Screenshot header; the gradient shows while it loads or if it's missing */}
               <div className="project-card__header" style={{ background: gradient }}>
+                {image && (
+                  <img
+                    src={image}
+                    alt={`Captura de ${title}`}
+                    className="project-card__shot"
+                    width="960" height="480"
+                    loading="lazy" decoding="async"
+                    onError={(e) => { e.currentTarget.hidden = true }}
+                  />
+                )}
                 <span className="project-card__status">{status}</span>
                 {url && (
                   <span className="project-card__header-icon" aria-hidden="true">
