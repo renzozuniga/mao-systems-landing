@@ -4,20 +4,71 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/assets/mao-icon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="MAO Systems — Engineering Digital Solutions. Desarrollo de software a medida para empresas en Perú y Latinoamérica." />
-    <meta name="keywords" content="desarrollo de software, aplicaciones web, consultoría tecnológica, Lima, Perú, React, Angular, Node.js, Python" />
-    <meta property="og:title" content="MAO Systems — Engineering Digital Solutions" />
-    <meta property="og:description" content="Diseñamos y desarrollamos soluciones digitales que transforman procesos, mejoran la experiencia de tus clientes y escalan con tu negocio." />
-    <meta property="og:image" content="/assets/mao-icon.svg" />
-    <meta property="og:url" content="https://maosystems.io" />
+    <title>MAO Systems · Software a medida para empresas en Perú</title>
+    <meta name="description" content="Desarrollamos sistemas a medida, webs y automatizaciones para empresas en Perú y Latinoamérica. Respondemos en menos de 24 h." />
+    <meta name="theme-color" content="#0E4F45" />
+
+    <!-- One URL for search engines: maosystems.io and www both resolve here. -->
+    <link rel="canonical" href="https://www.maosystems.io/" />
+
+    <!-- Link previews (WhatsApp, LinkedIn, Facebook, X). Images must be absolute
+         raster URLs: SVG previews are not rendered by these apps. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="MAO Systems" />
+    <meta property="og:locale" content="es_PE" />
+    <meta property="og:url" content="https://www.maosystems.io/" />
+    <meta property="og:title" content="MAO Systems · Software a medida para empresas que quieren crecer" />
+    <meta property="og:description" content="Sistemas, webs y automatización para empresas en Perú y Latinoamérica. Respondemos en menos de 24 h." />
+    <meta property="og:image" content="https://www.maosystems.io/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="MAO Systems · Software a medida para empresas que quieren crecer" />
     <meta name="twitter:card" content="summary_large_image" />
-    <title>MAO Systems — Engineering Digital Solutions</title>
+    <meta name="twitter:title" content="MAO Systems · Software a medida para empresas que quieren crecer" />
+    <meta name="twitter:description" content="Sistemas, webs y automatización para empresas en Perú y Latinoamérica." />
+    <meta name="twitter:image" content="https://www.maosystems.io/og-image.png" />
+
+    <!-- What the business is, for search engines. Only verifiable facts:
+         no ratings or reviews until there are real ones. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ProfessionalService",
+        "@id": "https://www.maosystems.io/#org",
+        "name": "MAO Systems",
+        "url": "https://www.maosystems.io/",
+        "logo": "https://www.maosystems.io/assets/mao-icon.svg",
+        "image": "https://www.maosystems.io/og-image.png",
+        "description": "Desarrollo de software a medida, dashboards, APIs, consultoría tecnológica y automatización de procesos para empresas.",
+        "email": "maosystems.dev@gmail.com",
+        "address": { "@type": "PostalAddress", "addressLocality": "Lima", "addressCountry": "PE" },
+        "areaServed": [
+          { "@type": "Country", "name": "Perú" },
+          { "@type": "Place", "name": "Latinoamérica" }
+        ],
+        "knowsLanguage": ["es", "en"],
+        "sameAs": ["https://www.linkedin.com/in/renzo-zuniga", "https://github.com/renzozuniga"],
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "Servicios",
+          "itemListElement": [
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Desarrollo web a medida" } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Dashboards y analytics" } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "APIs y microservicios" } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Consultoría tecnológica" } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Automatización de procesos" } }
+          ]
+        }
+      }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"><!--app-html--></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
