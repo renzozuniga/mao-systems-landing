@@ -4,6 +4,9 @@ import './styles/tokens.css'
 import './App.css'
 import App from './App.jsx'
 import { initConsentedAnalytics, initVercelAnalytics } from './lib/analytics'
+import { captureReferral } from './lib/referral'
+
+captureReferral()
 
 const root = document.getElementById('root')
 const app = (
