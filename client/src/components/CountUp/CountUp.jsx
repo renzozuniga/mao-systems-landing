@@ -13,16 +13,16 @@ export default function CountUp({ value, className }) {
   const suffix = match ? match[2] : ''
 
   const ref = useRef(null)
-  const [current, setCurrent] = useState(target === null ? value : 0)
+  // Start at the real value so the prerendered HTML (and crawlers) show "15+",
+  // not "0+"; the effect rewinds to 0 in the browser before the count-up.
+  const [current, setCurrent] = useState(target === null ? value : target)
 
   useEffect(() => {
     if (target === null) return
     const el = ref.current
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduce || !('IntersectionObserver' in window)) {
-      setCurrent(target)
-      return
-    }
+    if (reduce || !('IntersectionObserver' in window)) return
+    setCurrent(0)
 
     let frame
     const observer = new IntersectionObserver(([entry]) => {

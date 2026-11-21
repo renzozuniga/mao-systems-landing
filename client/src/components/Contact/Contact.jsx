@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import useTurnstile from './useTurnstile'
+import { trackLead } from '../../lib/analytics'
 import './Contact.css'
 
 // Phone metadata + flags are heavy; load them only when the phone step shows.
@@ -162,6 +163,7 @@ export default function Contact() {
       const data = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(data.message)
       setStatus('idle')
+      trackLead({ country: phone.country })
       goTo(TOTAL_STEPS, 'fwd')
     } catch (err) {
       setStatus('idle')
