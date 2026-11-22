@@ -103,6 +103,8 @@ router.post('/', contactValidation, async (req, res) => {
   const prettyPhone = phone.formatInternational()
   const country     = phone.country ? regionName.of(phone.country) : ''
   const waLink      = `https://wa.me/${phone.number.slice(1)}`
+  // Stays the Resend account's own inbox, not the public contacto@ alias: while we
+  // send from onboarding@resend.dev, Resend only delivers to the account owner.
   const toEmail     = process.env.CONTACT_TO_EMAIL || 'maosystems.dev@gmail.com'
   const sentAt      = new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' })
 
