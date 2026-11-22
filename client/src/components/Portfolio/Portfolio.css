@@ -39,17 +39,85 @@
 
 /* Gradient header */
 .project-card__header {
-  height: 140px;
+  aspect-ratio: 2 / 1;
   position: relative;
+  overflow: hidden;
   display: flex;
   align-items: flex-end;
   padding: var(--space-4) var(--space-5);
 }
 
+.project-card__shot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+  transition: transform 0.6s var(--ease-out, ease-out);
+}
+
+/* Darkens only the bottom edge so the white status pill stays readable on light screenshots */
+.project-card__header:has(.project-card__shot:not([hidden]))::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(12, 32, 26, 0.55) 0%, rgba(12, 32, 26, 0) 45%);
+  pointer-events: none;
+}
+
+/* ── Hover reel (ProjectReel.jsx) ── */
+.reel {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  pointer-events: none;
+}
+.reel.is-playing { opacity: 1; }
+
+.reel__frame,
+.reel__scroll {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Cross-fade with a slow push-in; leaving frames reset their zoom only after fading out */
+.reel__frame {
+  object-position: top left;
+  opacity: 0;
+  transform: scale(1);
+  transform-origin: 30% 20%;
+  transition: opacity 0.7s ease, transform 0s linear 0.7s;
+}
+.reel__frame.is-current {
+  opacity: 1;
+  transform: scale(1.06);
+  transition: opacity 0.7s ease, transform 2.6s linear;
+}
+
+/* Pans down the full page and back up; paused rather than reset, so leaving never jumps */
+.reel__scroll {
+  object-position: 50% 0%;
+  animation: reel-scroll var(--reel-dur, 6s) ease-in-out 0.3s infinite alternate;
+  animation-play-state: paused;
+}
+.reel.is-playing .reel__scroll { animation-play-state: running; }
+
+@keyframes reel-scroll {
+  to { object-position: 50% 100%; }
+}
+
+.project-card__status,
+.project-card__header-icon { z-index: 1; }
+
 .project-card__status {
   display: inline-flex;
   padding: var(--space-1) var(--space-3);
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(12, 32, 26, 0.45);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255,255,255,0.3);
   border-radius: var(--radius-full);
