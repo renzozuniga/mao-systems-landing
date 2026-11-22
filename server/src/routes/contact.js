@@ -59,6 +59,13 @@ const contactValidation = [
   // values: 'null' — the deployed client sent null when Turnstile had no keys,
   // and plain optional() only skips undefined, which rejected every submission.
   body('turnstileToken').optional({ values: 'null' }).isString(),
+
+  // Partner referral code from ?ref= links. Never rejects a lead: anything
+  // that isn't a plain code is just dropped.
+  body('ref').customSanitizer((v) => {
+    const code = String(v ?? '').trim().toLowerCase()
+    return /^[a-z0-9-]{1,40}$/.test(code) ? code : ''
+  }),
 ]
 
 // ── POST / ────────────────────────────────────────────────────────────────────
@@ -66,7 +73,7 @@ const contactValidation = [
  * Receives the contact stepper's answers plus a phone number from any country
  * and emails them to CONTACT_TO_EMAIL via Resend.
  *
- * @param {object} req.body - { answers: [{ question, answer }], phone (E.164), website?, turnstileToken? }
+ * @param {object} req.body - { answers: [{ question, answer }], phone (E.164), website?, turnstileToken?, ref? }
  * @returns {200} { message }
  * @returns {403} { message } when Turnstile verification fails
  * @returns {422} { message, errors[] } on validation failure
@@ -83,7 +90,7 @@ router.post('/', contactValidation, async (req, res) => {
     })
   }
 
-  const { answers, website, turnstileToken } = req.body
+  const { answers, website, turnstileToken, ref } = req.body
   const phone = req.parsedPhone
 
   // Honeypot filled → almost certainly a bot. Answer 200 so it doesn't retry.
@@ -110,7 +117,7 @@ router.post('/', contactValidation, async (req, res) => {
 
   // Lets the stepper be tried end-to-end locally without Resend credentials.
   if (!process.env.RESEND_API_KEY && process.env.NODE_ENV !== 'production') {
-    console.log('[CONTACT] (dev, no RESEND_API_KEY) Lead:', prettyPhone, answers)
+    console.log('[CONTACT] (dev, no RESEND_API_KEY) Lead:', prettyPhone, ref ? `ref=${ref}` : '(sin ref)', answers)
     return res.status(200).json({ message: 'Recibido.' })
   }
 
@@ -121,14 +128,15 @@ router.post('/', contactValidation, async (req, res) => {
           </tr>`).join('')
 
   const html = `
-    <div style="font-family: 'Geist', 'Inter', 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #F7F5EF; padding: 24px;">
-      <div style="background: #0F3D2E; padding: 24px 32px; border-radius: 14px 14px 0 0;">
+    <div style="font-family: 'Geist', 'Inter', 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #F1E9DA; padding: 24px;">
+      <div style="background: #0E4F45; padding: 24px 32px; border-radius: 14px 14px 0 0;">
         <p style="margin: 0 0 6px; color: #7BB89E; font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;">maosystems.io · nuevo contacto</p>
         <h1 style="color: #F7F5EF; margin: 0; font-size: 22px; font-weight: 700;">${prettyPhone}</h1>
         ${country ? `<p style="margin: 6px 0 0; color: #A8C7B7; font-size: 14px;">${esc(country)}</p>` : ''}
       </div>
       <div style="background: #FFFFFF; padding: 28px 32px; border: 1px solid #E2DED3; border-top: none; border-radius: 0 0 14px 14px;">
-        <a href="${waLink}" style="display: inline-block; background: #0F3D2E; color: #F7F5EF; text-decoration: none; font-weight: 600; font-size: 14px; padding: 12px 20px; border-radius: 10px;">Escribir por WhatsApp</a>
+        ${ref ? `<p style="margin: 0 0 18px; padding: 10px 14px; background: #FBE6DF; border-radius: 10px; color: #7A3A26; font-size: 14px;"><strong>Recomendado por:</strong> ${esc(ref)}</p>` : ''}
+        <a href="${waLink}" style="display: inline-block; background: #0E4F45; color: #F7F5EF; text-decoration: none; font-weight: 600; font-size: 14px; padding: 12px 20px; border-radius: 10px;">Escribir por WhatsApp</a>
         <table style="width: 100%; border-collapse: collapse; margin-top: 24px;">${rows}
         </table>
         <p style="margin: 24px 0 0; font-size: 12px; color: #8B877E;">Enviado desde maosystems.io · ${sentAt}</p>
@@ -139,6 +147,7 @@ router.post('/', contactValidation, async (req, res) => {
   const text = [
     `Nuevo contacto: ${prettyPhone}${country ? ` (${country})` : ''}`,
     `WhatsApp: ${waLink}`,
+    ...(ref ? [`Recomendado por: ${ref}`] : []),
     '',
     ...answers.map(({ question, answer }) => `${question} ${answer}`),
     '',
@@ -151,7 +160,7 @@ router.post('/', contactValidation, async (req, res) => {
     const { error } = await getResend().emails.send({
       from:    `MAO Systems Web <${fromEmail}>`,
       to:      [toEmail],
-      subject: `[maosystems.io] Nuevo contacto · ${prettyPhone}${country ? ` · ${country}` : ''}`,
+      subject: `[maosystems.io] Nuevo contacto · ${prettyPhone}${country ? ` · ${country}` : ''}${ref ? ` · ref: ${ref}` : ''}`,
       html,
       text,
     })

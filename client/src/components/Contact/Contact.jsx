@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import useTurnstile from './useTurnstile'
 import { trackLead } from '../../lib/analytics'
+import { currentReferral } from '../../lib/referral'
 import './Contact.css'
 
 // Phone metadata + flags are heavy; load them only when the phone step shows.
@@ -149,6 +150,7 @@ export default function Contact() {
       if (turnstile.enabled && !turnstileToken) {
         throw new Error('No pudimos verificar que no eres un robot. Recarga la página e inténtalo otra vez.')
       }
+      const ref = currentReferral()
       const res = await fetch(`${API_URL}/api/contact`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -158,12 +160,13 @@ export default function Contact() {
           website,
           // Omit rather than send null while Turnstile has no site key.
           ...(turnstileToken && { turnstileToken }),
+          ...(ref && { ref }),
         }),
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(data.message)
       setStatus('idle')
-      trackLead({ country: phone.country })
+      trackLead({ country: phone.country, ...(ref && { referral: ref }) })
       goTo(TOTAL_STEPS, 'fwd')
     } catch (err) {
       setStatus('idle')
