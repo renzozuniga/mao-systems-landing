@@ -3,8 +3,8 @@ import './About.css'
 
 const STATS = [
   { value: '7+',  label: 'Años de experiencia' },
-  { value: '15+', label: 'Proyectos entregados'  },
-  { value: '3',   label: 'Países de clientes'    },
+  { value: '5',   label: 'Productos en vivo'   },
+  { value: '24 h', label: 'Tiempo de respuesta' },
 ]
 
 /**
