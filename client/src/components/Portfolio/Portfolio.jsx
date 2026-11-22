@@ -63,7 +63,7 @@ const PROJECTS = [
 ]
 
 /**
- * Portfolio grid showcasing the 5 planned/delivered projects.
+ * Portfolio grid with our own products, live and open to try.
  */
 export default function Portfolio() {
   return (
@@ -74,8 +74,8 @@ export default function Portfolio() {
           <span className="section__eyebrow">Portfolio</span>
           <h2 className="section__title">Proyectos que hablan<br />por sí solos</h2>
           <p className="section__subtitle">
-            Cada proyecto es construido con código limpio, diseño profesional
-            y entregado en tiempo y forma.
+            Productos propios en producción, construidos con código limpio
+            y diseño profesional. Entra y pruébalos.
           </p>
         </header>
 
