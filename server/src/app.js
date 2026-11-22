@@ -47,7 +47,7 @@ const contactLimiter = rateLimit({
   // api.maosystems.io sits behind Cloudflare, so the visitor's address is in
   // cf-connecting-ip; fall back to req.ip for direct and local requests.
   keyGenerator: (req) => req.get('cf-connecting-ip') || ipKeyGenerator(req.ip),
-  message: { message: 'Recibimos varios envíos desde tu conexión. Inténtalo en una hora o escríbenos a maosystems.dev@gmail.com.' },
+  message: { message: 'Recibimos varios envíos desde tu conexión. Inténtalo en una hora o escríbenos a contacto@maosystems.io.' },
 })
 
 app.get('/health', (_req, res) => res.json({ status: 'ok', service: 'mao-systems-api' }))
